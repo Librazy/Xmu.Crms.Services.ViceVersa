@@ -6,7 +6,12 @@ namespace Microsoft.Extensions.DependencyInjection
     public static class ViceVersaExtensions
     {
         // 为每一个你写的Service写一个这样的函数，把 UserService 替换为你实现的 Service
-        public static IServiceCollection AddViceVersaUserService(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddViceVersaClassService(this IServiceCollection serviceCollection)
+        {
+            return serviceCollection.AddScoped<IUserService, UserService>();
+        }
+
+        public static IServiceCollection AddViceVersaClassDao(this IServiceCollection serviceCollection)
         {
             return serviceCollection.AddScoped<IUserService, UserService>();
         }
