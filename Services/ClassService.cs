@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Xmu.Crms.Services.ViceVersa.Daos;
+using Xmu.Crms.Shared.Exceptions;
 using Xmu.Crms.Shared.Models;
 using Xmu.Crms.Shared.Service;
 
@@ -20,8 +21,15 @@ namespace Xmu.Crms.Services.ViceVersa
 
         public bool DeleteClassByClassId(long classId)
         {
-            _classDao.Delete(classId);
-            return true;
+            try
+            {
+                _classDao.Delete(classId);
+                return true;
+            }
+            catch(ClassNotFoundException ec)
+            {
+                throw;
+            }
         }
 
         public bool DeleteClassByCourseId(long courseId)
@@ -93,7 +101,12 @@ namespace Xmu.Crms.Services.ViceVersa
 
         public List<ClassInfo> ListClassByCourseId(long courseId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<ClassInfo> list = _classDao.QueryAll(courseId);
+                return list;
+            }
+            catch { throw; }
         }
 
         public List<ClassInfo> ListClassByName(string courseName, string teacherName)

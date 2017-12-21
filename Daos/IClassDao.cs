@@ -8,7 +8,7 @@ namespace Xmu.Crms.Services.ViceVersa
         void Save(ClassInfo t);
         void Delete(long id);
         void Update(ClassInfo t);
-        List<ClassInfo> QueryAll();
+        List<ClassInfo> QueryAll(long id);
         ClassInfo Get(long id);
     }
 }

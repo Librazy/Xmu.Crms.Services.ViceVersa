@@ -33,20 +33,25 @@ namespace Xmu.Crms.Services.ViceVersa
 
         public ClassInfo Get(long id)
         {
-            using (var scope = new TransactionScope())
-            {
+          
                 var classinfo = _db.ClassInfo.SingleOrDefault(u => u.Id == id);
                 if (classinfo == null)
                 {
                     throw new ClassNotFoundException();
                 }
                 return classinfo;
-            }
+           
         }
 
-        public List<ClassInfo> QueryAll()
+        public List<ClassInfo> QueryAll(long id)
         {
-            throw new NotImplementedException();
+
+            List<ClassInfo>  list=_db.ClassInfo.Where(u => u.Course.Id == id).ToList();
+            if (list == null)
+            {
+                throw new ClassNotFoundException();
+            }
+            return list;
         }
 
         public void Save(ClassInfo t)
