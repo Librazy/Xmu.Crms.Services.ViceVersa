@@ -19,12 +19,31 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
 
         public void DeleteStudentScoreGroupByTopicId(long topicId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                StudentScoreGroup ssg = new StudentScoreGroup { Id = topicId };
+                //将实体附加到对象管理器中
+                _db.StudentScoreGroup.Attach(ssg);
+                //删除
+                _db.StudentScoreGroup.Remove(ssg);
+                _db.SaveChanges();
+            }catch
+            {
+                throw;
+            }
         }
 
-        public void InsertGroupGradeByUserId(long userId, long seminarId, long groupId, long grade)
+        public void InsertGroupGradeByUserId(UserInfo userInfo, SeminarGroupTopic seminarGroupTopic, int grade)
         {
-            throw new NotImplementedException();
+            try
+            {
+                StudentScoreGroup ssg = new StudentScoreGroup { Student = userInfo, SeminarGroupTopic = seminarGroupTopic, Grade = grade };
+                _db.StudentScoreGroup.Add(ssg);
+                _db.SaveChanges();
+            } catch
+            {
+                throw;
+            }
         }
 
         public List<long> ListSeminarGradeBySeminarGroupId(long userId, long seminarGroupId)

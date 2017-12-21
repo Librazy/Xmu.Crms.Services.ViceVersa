@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Xmu.Crms.Shared.Models;
 
 namespace Xmu.Crms.Services.ViceVersa.Daos
 {
@@ -11,7 +12,6 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         /// @author zhouzhongjun
         /// </summary>
         /// <param name="topicId">话题Id</param>
-        /// <returns>true删除成功  false删除失败</returns>
         void DeleteStudentScoreGroupByTopicId(long topicId);
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         /// <param name="groupId">小组Id</param>
         /// <param name="grade">分数</param>
         /// <returns>true 提交成功 false 提交失败</returns>
-        void InsertGroupGradeByUserId(long userId, long seminarId, long groupId, long grade);
+        void InsertGroupGradeByUserId(UserInfo userInfo, SeminarGroupTopic seminarGroupTopic, int grade);
 
         /// <summary>
         /// 按ID设置小组报告分.
