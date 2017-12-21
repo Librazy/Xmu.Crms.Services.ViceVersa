@@ -1,26 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Xmu.Crms.Shared.Models;
 using Xmu.Crms.Shared.Service;
-using Xmu.Crms.Web.ViceVersa;
+
 namespace Xmu.Crms.Services.ViceVersa
 {
     class ClassService : IClassService
     {
-        private readonly ISeminarService _seminarService;
+        //private readonly ISeminarService _seminarService;
 
         private readonly ClassDao _classDao;
-        public  ClassService(ClassDao classDao,ISeminarService seminarService)
+        public  ClassService(ClassDao classDao)
         {
             _classDao = classDao;
-            _seminarService = seminarService;
+            //_seminarService = seminarService;
         }
         
 
         public bool DeleteClassByClassId(long classId)
         {
-            _classDao.Delete((int)classId);
+            _classDao.Delete(classId);
             return true;
         }
 
@@ -51,17 +50,24 @@ namespace Xmu.Crms.Services.ViceVersa
 
         public ClassInfo GetClassByClassId(long classId)
         {
-            // 调用Entity framework
-            var classinfo = _classDao.Get(classId);
-            
-            return classinfo;
+            try
+            {
+                var classinfo = _classDao.Get(classId);
+
+                return classinfo;
+            }
+            catch { throw; }
         }
 
         public ClassInfo GetScoreRule(long classId)
         {
-            var classinfo = _classDao.Get(classId);
+            try
+            {
+                var classinfo = _classDao.Get(classId);
 
-            return classinfo;
+                return classinfo;
+            }
+            catch { throw; }
         }
 
         public long InsertClassById(long userId, long courseId)
@@ -76,7 +82,12 @@ namespace Xmu.Crms.Services.ViceVersa
 
         public long InsertScoreRule(long classId, ClassInfo proportions)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _classDao.Update(proportions);
+                return 1;    //???
+            }
+            catch { throw; }
         }
 
         public List<ClassInfo> ListClassByCourseId(long courseId)

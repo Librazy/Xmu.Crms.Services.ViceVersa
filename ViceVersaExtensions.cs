@@ -1,4 +1,5 @@
 ﻿using Xmu.Crms.Services.ViceVersa;
+using Xmu.Crms.Shared.Models;
 using Xmu.Crms.Shared.Service;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -8,12 +9,12 @@ namespace Microsoft.Extensions.DependencyInjection
         // 为每一个你写的Service写一个这样的函数，把 UserService 替换为你实现的 Service
         public static IServiceCollection AddViceVersaClassService(this IServiceCollection serviceCollection)
         {
-            return serviceCollection.AddScoped<IUserService, UserService>();
+            return serviceCollection.AddScoped<IClassService, ClassService>();
         }
 
         public static IServiceCollection AddViceVersaClassDao(this IServiceCollection serviceCollection)
         {
-            return serviceCollection.AddScoped<IUserService, UserService>();
+            return serviceCollection.AddScoped<IClassDao,ClassDao>();
         }
     }
 }
