@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Xmu.Crms.Services.ViceVersa.Daos;
 using Xmu.Crms.Shared.Models;
 using Xmu.Crms.Shared.Service;
 

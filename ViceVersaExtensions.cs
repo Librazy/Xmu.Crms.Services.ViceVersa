@@ -1,10 +1,6 @@
 ﻿using Xmu.Crms.Services.ViceVersa;
-<<<<<<< HEAD
-using Xmu.Crms.Shared.Models;
-=======
 using Xmu.Crms.Services.ViceVersa.Daos;
 using Xmu.Crms.Services.ViceVersa.Services;
->>>>>>> master
 using Xmu.Crms.Shared.Service;
 
 namespace Microsoft.Extensions.DependencyInjection
