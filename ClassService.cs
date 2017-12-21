@@ -9,8 +9,8 @@ namespace Xmu.Crms.Services.ViceVersa
     {
         //private readonly ISeminarService _seminarService;
 
-        private readonly ClassDao _classDao;
-        public  ClassService(ClassDao classDao)
+        private readonly IClassDao _classDao;
+        public  ClassService(IClassDao classDao)
         {
             _classDao = classDao;
             //_seminarService = seminarService;
