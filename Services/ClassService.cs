@@ -254,17 +254,11 @@ namespace Xmu.Crms.Services.ViceVersa
                     proportions.FivePointPercentage + proportions.FourPointPercentage + proportions.ThreePointPercentage != 10)
                     throw new InvalidOperationException();
                 var result = _classDao.Update(proportions);//新建班级时已经建了一个空的
-                if (result != 0) return -1;
-                return classId;
+                //if (result != 0) return -1;
+                //return classId;
             }
             catch (InvalidOperationException ei) { throw ei; }
-            catch (ClassNotFoundException ec) { throw ec; }
-            try
-            {
-                var result = _classDao.Update(proportions);
-            }
-            catch (ClassNotFoundException e) { throw; }
+            catch (ClassNotFoundException ec){ throw ec; }
         }
-
     }
 }
