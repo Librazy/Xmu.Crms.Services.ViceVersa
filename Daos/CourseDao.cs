@@ -4,7 +4,8 @@ using System.Numerics;
 using System.Linq;
 using System.Text;
 using Xmu.Crms.Shared.Models;
-
+using Xmu.Crms.Shared.Exceptions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Xmu.Crms.Services.ViceVersa.Daos
 {
@@ -17,9 +18,22 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
             _db = db;
         }
 
-        public bool DeleteCourseByCourseId(BigInteger courseId)
+        public void DeleteCourseByCourseId(long courseId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Course course = new Course { Id = courseId };
+                //将实体附加到对象管理器中
+                _db.Course.Attach(course);
+                //删除
+                if (_db.Course.Remove(course) == null)
+                    throw new CourseNotFoundException();
+                _db.SaveChanges();
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public Course GetCourseByCourseId(BigInteger courseId)
@@ -35,7 +49,7 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
             }
         }
 
-        public BigInteger InsertCourseByUserId(BigInteger userId, Course course)
+        public long InsertCourseByUserId(long userId, Course course)
         {
             try
             {
@@ -71,11 +85,11 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
 
         public List<Course> ListCourseByUserId(BigInteger userId)
         {
+            List<Course> courseList = null;
             try
             {
-                List<Course> courseList = null;
                 //获得对应的选课信息
-                var selectionList = _db.CourseSelection.Where(u => u.Student.Id == userId).ToList();
+                var selectionList = _db.CourseSelection.Include(u=>u.ClassInfo).Include(u=>u.ClassInfo.Course).Where(u => u.Student.Id == userId).ToList();
                 if (selectionList != null)
                 {
                     courseList = new List<Course>();
@@ -84,17 +98,32 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                         courseList.Add(i.ClassInfo.Course);
                     }
                 }
-                return courseList;
             }
             catch
             {
                 throw;
             }
+            return courseList;
         }
 
-        public void UpdateCourseByCourseId(BigInteger courseId, Course course)
+        public void UpdateCourseByCourseId(long courseId, Course course)
         {
-            throw new NotImplementedException();
+            try
+            {
+                Course cour = _db.Course.SingleOrDefault(c => c.Id == courseId);
+                //如果找不到该课程
+                if (cour == null)
+                {
+                    throw new CourseNotFoundException();
+                }
+                //更新该课程
+                cour = course;
+                cour.Id = courseId; //???
+                _db.SaveChanges();
+            }catch
+            {
+                throw;
+            }
         }
     }
 }
