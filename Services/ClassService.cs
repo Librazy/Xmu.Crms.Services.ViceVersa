@@ -94,26 +94,27 @@ namespace Xmu.Crms.Services.ViceVersa
             throw new NotImplementedException();
         }
 
-        /// 按课程名称和教师名称获取班级列表.
+        ///// 按课程名称和教师名称获取班级列表.
         public List<ClassInfo> ListClassByName(string courseName, string teacherName)
         {
-            List<ClassInfo> classList = null;
-            if (courseName!=null)
-            {
-              //  List<Course>courseList= _courseService.ListCourseByCourseName(courseName);
-                List<ClassInfo> templist=null;
-               // if (courseList == null) return null;
-               // foreach (Course c in courseList)
-                {
-                    templist = _classDao.QueryAll(c.Id);
-                    classList.AddRange(templist);
-                }
-            }
-            else if(teacherName!=null)
-            {
-               // List<Course> courseList = _courseService.ListClassByTeacherName(teacherName);
-            }
-            return classList;
+            throw new NotImplementedException();
+            //    List<ClassInfo> classList = null;
+            //    if (courseName!=null)
+            //    {
+            //      //  List<Course>courseList= _courseService.ListCourseByCourseName(courseName);
+            //        List<ClassInfo> templist=null;
+            //       // if (courseList == null) return null;
+            //       // foreach (Course c in courseList)
+            //        {
+            //            templist = _classDao.QueryAll(c.Id);
+            //            classList.AddRange(templist);
+            //        }
+            //    }
+            //    else if(teacherName!=null)
+            //    {
+            //       // List<Course> courseList = _courseService.ListClassByTeacherName(teacherName);
+            //    }
+            //    return classList;
         }
 
         public void UpdateClassByClassId(long classId)
