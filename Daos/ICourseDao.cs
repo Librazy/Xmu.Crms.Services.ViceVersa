@@ -20,15 +20,15 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         List<Course> ListCourseByUserId(BigInteger userId);
 
 
-        /**
-         * 按userId创建课程.
-         * @author ZhouZhongjun
-         * @param userId 用户Id
-         * @param course 课程信息
-         * @return courseId 新建课程的id
-         * @exception ArgumentException userId格式错误时抛出
-         */
-        BigInteger InsertCourseByUserId(BigInteger userId, Course course);
+        /// <summary>
+        /// 按userId创建课程.
+        /// @author ZhouZhongjun
+        /// </summary>
+        /// <param name="userId">用户Id</param>
+        /// <param name="course">课程信息</param>
+        /// <returns>courseId 新建课程的id</returns>
+        /// <exception cref="T:System.ArgumentException">userId格式错误时抛出</exception>
+        long InsertCourseByUserId(long userId, Course course);
 
 
         /**
@@ -42,28 +42,25 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         Course GetCourseByCourseId(BigInteger courseId);
 
 
-        /**
-         * 传入courseId和course信息修改course信息.
-         * @author ZhouZhongjun
-         * @param courseId 课程Id
-         * @param course 课程信息
-         * @return true修改成功  false修改失败
-         */
-        void UpdateCourseByCourseId(BigInteger courseId, Course course);
+        /// <summary>
+        /// 传入courseId和course信息修改course信息.
+        /// @author ZhouZhongjun
+        /// </summary>
+        /// <param name="courseId">课程Id</param>
+        /// <param name="course">课程信息</param>
+        void UpdateCourseByCourseId(long courseId, Course course);
 
 
-        /**
-         * 按courseId删除课程.
-         * <p>先根据courseID删除Seminar 和 class,然后再将course的信息删除<br>  
-         * @author ZhouZhongjun
-         * @param courseId 课程Id
-         * @see SeminarService #deleteSemiarByCourseId(BigInteger courseId)
-         * @see ClassService   #deleteClassByCourseId(BigInteger courseId)
-         * @return true删除成功  false删除失败
-         * @exception InfoIllegalException courseId格式错误时抛出
-         * @exception CourseNotFoundException 未找到课程
-         */
-        Boolean DeleteCourseByCourseId(BigInteger courseId);
+        /// <summary>
+        /// 按courseId删除课程.
+        /// @author ZhouZhongjun
+        /// </summary>
+        /// <param name="courseId">课程Id</param>
+        /// <seealso cref="M:Xmu.Crms.Shared.Service.ISeminarService.DeleteSeminarByCourseId(System.Int64)"/>
+        /// <seealso cref="M:Xmu.Crms.Shared.Service.IClassService.DeleteClassByCourseId(System.Int64)"/>
+        /// <exception cref="T:System.ArgumentException">courseId格式错误时抛出</exception>
+        /// <exception cref="T:Xmu.Crms.Shared.Exceptions.CourseNotFoundException">未找到课程</exception>
+        void DeleteCourseByCourseId(long courseId);
 
 
 
