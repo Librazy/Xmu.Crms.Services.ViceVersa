@@ -116,9 +116,16 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                 {
                     throw new CourseNotFoundException();
                 }
-                //更新该课程
-                cour = course;
-                cour.Id = courseId; //???
+                //更新该课程(更新界面上能够更改的内容)
+                cour.Name = course.Name;
+                cour.StartDate = course.StartDate;
+                cour.EndDate = course.EndDate;
+                cour.Description = course.Description;
+                cour.ThreePointPercentage = course.ThreePointPercentage;
+                cour.FourPointPercentage = course.FourPointPercentage;
+                cour.FivePointPercentage = course.FivePointPercentage;
+                cour.ReportPercentage = course.ReportPercentage;
+                cour.PresentationPercentage = course.PresentationPercentage;
                 _db.SaveChanges();
             }catch
             {

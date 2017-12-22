@@ -90,7 +90,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 
         public List<Course> ListCourseByCourseName(string courseName)
         {
-            throw new NotImplementedException();
+            List<Course> courseList = _iCourseDao.ListCourseByCourseName(courseName);
         }
 
         public List<Course> ListCourseByUserId(long userId)
@@ -113,7 +113,11 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         {
             try
             {
-                _iCourseDao.UpdateCourseByCourseId(courseId, course);
+                using (var scope = new TransactionScope())
+                {
+                    _iCourseDao.UpdateCourseByCourseId(courseId, course);
+                    scope.Complete();
+                }
             }catch
             {
                 throw;
