@@ -5,9 +5,9 @@ namespace Xmu.Crms.Services.ViceVersa
 {
     interface IClassDao
     {
-        void Save(ClassInfo t);
+        long Save(ClassInfo t);
         void Delete(long id);
-        void Update(ClassInfo t);
+        int Update(ClassInfo t);
         List<ClassInfo> QueryAll(long id);
         ClassInfo Get(long id);
     }

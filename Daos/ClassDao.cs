@@ -33,9 +33,9 @@ namespace Xmu.Crms.Services.ViceVersa
 
         public ClassInfo Get(long id)
         {
-          
-                var classinfo = _db.ClassInfo.SingleOrDefault(u => u.Id == id);
-                if (classinfo == null)
+
+            ClassInfo classinfo = _db.ClassInfo.Where(u => u.Id == id).SingleOrDefault<ClassInfo>();
+               if (classinfo == null)
                 {
                     throw new ClassNotFoundException();
                 }
@@ -43,10 +43,12 @@ namespace Xmu.Crms.Services.ViceVersa
            
         }
 
-        public List<ClassInfo> QueryAll(long id)
+
+        //根据课程id列出所有班级
+        public List<ClassInfo> QueryAll(long id)  
         {
 
-            List<ClassInfo>  list=_db.ClassInfo.Where(u => u.Course.Id == id).ToList();
+            List<ClassInfo>  list=_db.ClassInfo.Where(u => u.Course.Id == id).ToList<ClassInfo>();
             if (list == null)
             {
                 throw new ClassNotFoundException();
@@ -54,34 +56,60 @@ namespace Xmu.Crms.Services.ViceVersa
             return list;
         }
 
-        public void Save(ClassInfo t)
+
+        //添加班级返回id
+        public long Save(ClassInfo t)
         {
             using (var scope = new TransactionScope())
             {
-
-                //var classinfo = new ClassInfo(t);
+                
                 _db.ClassInfo.Add(t);
-
+                
                 _db.SaveChanges();
 
                 scope.Complete();
+                return t.Id;
             }
+            
         }
 
-        public void Update(ClassInfo t)
+        //添加学生选课表返回id
+        public long SaveSelection(CourseSelection t)
         {
             using (var scope = new TransactionScope())
             {
 
-                //var classinfo = new ClassInfo(t);
-                //将实体附加到对象管理器中
-                _db.ClassInfo.Attach(t);
-                //把当前实体的状态改为Modified
-                _db.Entry(t).State = EntityState.Modified;
+                _db.CourseSelection.Add(t);
 
                 _db.SaveChanges();
 
                 scope.Complete();
+                return t.Id;
+            }
+
+        }
+
+        public int Update(ClassInfo t)
+        {
+            using (var scope = new TransactionScope())
+            {
+
+                ClassInfo c = _db.ClassInfo.Where(u => u.Id == t.Id).SingleOrDefault<ClassInfo>();
+                if (c == null) throw new ClassNotFoundException();
+                c.Name = t.Name;
+                c.Course = t.Course;
+                c.Site = t.Site;
+                c.ClassTime = t.ClassTime;
+                c.ReportPercentage = t.ReportPercentage;
+                c.PresentationPercentage = t.PresentationPercentage;
+                c.FivePointPercentage = t.FivePointPercentage;
+                c.FourPointPercentage = t.FourPointPercentage;
+                c.ThreePointPercentage = t.ThreePointPercentage;
+                
+                _db.SaveChanges();
+
+                scope.Complete();
+                return 0;
             }
         }
     }

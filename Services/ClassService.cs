@@ -11,6 +11,7 @@ namespace Xmu.Crms.Services.ViceVersa
     {
         //private readonly ISeminarService _seminarService;
         private readonly ICourseService _courseService;
+        private readonly IUserService _userService;
 
         private readonly IClassDao _classDao;
         public  ClassService(IClassDao classDao)
@@ -69,30 +70,74 @@ namespace Xmu.Crms.Services.ViceVersa
             catch { throw; }
         }
 
+
+        /// 查询评分规则.
         public ClassInfo GetScoreRule(long classId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                ClassInfo classinfo = _classDao.Get(classId);
+               
+                return classinfo;
+            }
+            catch { throw; }
         }
 
+
+        /// 新建班级.  只修改了班级表
         public long InsertClassById(long userId, long courseId)
         {
-            throw new NotImplementedException();
+            ClassInfo newclass = new ClassInfo();
+            newclass.Course = _courseService.GetCourseByCourseId(courseId);
+            return _classDao.Save(newclass);
         }
 
+
+        /// 学生按班级id选择班级.
         public string InsertCourseSelectionById(long userId, long classId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _userService.GetUserByUserId(userId);
+                GetClassByClassId(classId);
+                CourseSelection coursesele = new CourseSelection();
+                coursesele.Student.Id = userId;
+                coursesele.ClassInfo.Id = classId;
+                _classDao(coursesele);
+            }
+            catch (UserNotFoundException eu) { throw eu; }
+            catch(ClassNotFoundException ec) { throw ec; }
+           
         }
 
+
+        /// 新增评分规则.  返回班级id？
         public long InsertScoreRule(long classId, ClassInfo proportions)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = _classDao.Update(proportions);//新建班级时已经建了一个空的
+                if (result != 0) return -1;
+                return classId;
+            }
+            catch (ClassNotFoundException e) { throw; }
+
         }
 
+
+        /// 根据课程ID获得班级列表.
         public List<ClassInfo> ListClassByCourseId(long courseId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<ClassInfo> list = _classDao.QueryAll(courseId);
+                return list;
+            }
+            catch(ClassNotFoundException e) { throw; }
         }
+
+
+
 
         // 按课程名称和教师名称获取班级列表.
         public List<ClassInfo> ListClassByName(string courseName, string teacherName)
@@ -115,58 +160,38 @@ namespace Xmu.Crms.Services.ViceVersa
                 long userId = 1;   //jwt？？？？？
                  List<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
                 List<ClassInfo> studentClassList = _courseService.ListClassByUserId(userId);
-                foreach(ClassInfo c in teacherClassList)
+                foreach (ClassInfo ct in teacherClassList)
+                {
+                    foreach (ClassInfo cs in studentClassList)
+                        if (ct.Id == cs.Id) break;
+                    classList.Add(ct);
+                }
+                            
             }
             return classList;
         }
 
+
+        /// 按班级id和班级修改班级信息.
         public void UpdateClassByClassId(long classId)
         {
-            throw new NotImplementedException();
+            //try
+            //{
+            //    var result = _classDao.Update(proportions);
+            //}
+            //catch (ClassNotFoundException e) { throw; }
         }
 
+
+        /// 修改评分规则.
         public void UpdateScoreRule(long classId, ClassInfo proportions)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var result = _classDao.Update(proportions);
+            }
+            catch (ClassNotFoundException e) { throw; }
         }
-
-
-        //public bool DeleteClassByClassId(long classId)
-        //{
-       
-        //}
-
-
-
-        //public ClassInfo GetClassByClassId(long classId)
-        //{
-       
-        //}
-
-        //public ClassInfo GetScoreRule(long classId)
-        //{
-        //    try
-        //    {
-        //        var classinfo = _classDao.Get(classId);
-
-        //        return classinfo;
-        //    }
-        //    catch { throw; }
-        //}
-
-
-
-        //public List<ClassInfo> ListClassByCourseId(long courseId)
-        //{
-        //    try
-        //    {
-        //        List<ClassInfo> list = _classDao.QueryAll(courseId);
-        //        return list;
-        //    }
-        //    catch { throw; }
-        //}
-
-
 
     }
 }
