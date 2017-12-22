@@ -195,33 +195,37 @@ namespace Xmu.Crms.Services.ViceVersa
         // 按课程名称和教师名称获取班级列表.
         public List<ClassInfo> ListClassByName(string courseName, string teacherName)
         {
-            
-            List<ClassInfo> classList = null;
-            if (courseName != null)
+            try
             {
-                List<Course>courseList= _courseService.ListCourseByCourseName(courseName);
-                List<ClassInfo> templist = null;
-                if (courseList == null) return null;
-                 foreach (Course c in courseList)
+                List<ClassInfo> classList = null;
+                if (courseName != null)
                 {
-                    templist = _classDao.QueryAll(c.Id);
-                    classList.AddRange(templist);
+                    List<Course> courseList = _courseService.ListCourseByCourseName(courseName);
+                    List<ClassInfo> templist = null;
+                    if (courseList == null) return null;
+                    foreach (Course c in courseList)
+                    {
+                        templist = _classDao.QueryAll(c.Id);
+                        classList.AddRange(templist);
+                    }
                 }
-            }
-            else if (teacherName != null)
-            {
-                long userId = 1;   //jwt？？？？？
-                 List<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
-                List<ClassInfo> studentClassList = _courseService.ListClassByUserId(userId);
-                foreach (ClassInfo ct in teacherClassList)
+                else if (teacherName != null)
                 {
-                    foreach (ClassInfo cs in studentClassList)
-                        if (ct.Id == cs.Id) break;
-                    classList.Add(ct);
+                    long userId = 1;   //jwt？？？？？
+                    List<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
+                    List<ClassInfo> studentClassList = _courseService.ListClassByUserId(userId);
+                    foreach (ClassInfo ct in teacherClassList)
+                    {
+                        foreach (ClassInfo cs in studentClassList)
+                            if (ct.Id == cs.Id) break;
+                        classList.Add(ct);
+                    }
+
                 }
-                            
-            }
-            return classList;
+                return classList;
+
+            }catch(CourseNotFoundException ec) { throw ec; }
+            catch(UserNotFoundException eu) { throw eu; }
         }
 
 
@@ -239,6 +243,22 @@ namespace Xmu.Crms.Services.ViceVersa
         /// 修改评分规则.
         public void UpdateScoreRule(long classId, ClassInfo proportions)
         {
+            try
+            {
+                if (proportions.ReportPercentage < 0 || proportions.ReportPercentage > 100 ||
+                    proportions.PresentationPercentage < 0 || proportions.PresentationPercentage > 100 ||
+                    proportions.ReportPercentage + proportions.PresentationPercentage != 100 ||
+                    proportions.FivePointPercentage < 0 || proportions.FivePointPercentage > 10 ||
+                    proportions.FourPointPercentage < 0 || proportions.FourPointPercentage > 10 ||
+                    proportions.ThreePointPercentage < 0 || proportions.ThreePointPercentage > 10 ||
+                    proportions.FivePointPercentage + proportions.FourPointPercentage + proportions.ThreePointPercentage != 10)
+                    throw new InvalidOperationException();
+                var result = _classDao.Update(proportions);//新建班级时已经建了一个空的
+                if (result != 0) return -1;
+                return classId;
+            }
+            catch (InvalidOperationException ei) { throw ei; }
+            catch (ClassNotFoundException ec) { throw ec; }
             try
             {
                 var result = _classDao.Update(proportions);
