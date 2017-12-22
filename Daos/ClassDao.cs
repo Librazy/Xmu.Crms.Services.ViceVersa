@@ -18,13 +18,16 @@ namespace Xmu.Crms.Services.ViceVersa
             _db = db;
         }
 
+        //删除班级
         public void Delete(long id)
         {
             using (var scope = new TransactionScope())
             {
-                var classinfo = new ClassInfo { Id = id };
-                _db.ClassInfo.Attach(classinfo);
-                _db.ClassInfo.Remove(classinfo);
+                ClassInfo c = _db.ClassInfo.Where(u => u.Id == id).SingleOrDefault<ClassInfo>();
+                if (c == null) throw new ClassNotFoundException();
+                
+                _db.ClassInfo.Attach(c);
+                _db.ClassInfo.Remove(c);
                 _db.SaveChanges();
 
                 scope.Complete();
@@ -74,7 +77,7 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
         //添加学生选课表返回id
-        public long SaveSelection(CourseSelection t)
+        public long InsertSelection(CourseSelection t)
         {
             using (var scope = new TransactionScope())
             {
@@ -105,12 +108,20 @@ namespace Xmu.Crms.Services.ViceVersa
                 c.FivePointPercentage = t.FivePointPercentage;
                 c.FourPointPercentage = t.FourPointPercentage;
                 c.ThreePointPercentage = t.ThreePointPercentage;
-                
+
+                _db.Entry(c).State = EntityState.Modified;
                 _db.SaveChanges();
 
                 scope.Complete();
                 return 0;
             }
+        }
+
+
+        //根据班级id删除学生选课表
+        public void DeleteSelection(long userId, long classId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

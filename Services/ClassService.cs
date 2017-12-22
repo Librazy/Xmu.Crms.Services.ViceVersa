@@ -20,29 +20,42 @@ namespace Xmu.Crms.Services.ViceVersa
             //_seminarService = seminarService;
         }
 
+
+        /// 按班级id删除班级.
         public void DeleteClassByClassId(long classId)
         {
-            //    try
-            //    {
-            //        _classDao.Delete(classId);
-            //        return true;
-            //    }
-            //    catch(ClassNotFoundException ec)
-            //    {
-            //        throw ;
-            //    }
+            try
+            {
+                _classDao.Delete(classId);
+            }
+            catch (ClassNotFoundException ec)
+            {
+                throw ec;
+            }
         }
 
+
+        /// 按courseId删除Class.
         public void DeleteClassByCourseId(long courseId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _courseService.GetCourseByCourseId(courseId);
+                List<ClassInfo> deleteClasses = _classDao.QueryAll(courseId);
+                foreach (ClassInfo c in deleteClasses)
+                    _classDao.Delete(c.Id);
+            }catch(CourseNotFoundException e) { throw e; }
         }
 
+
+        /// 按classId删除CourseSelection表的一条记录.
         public void DeleteClassSelectionByClassId(long classId)
         {
             throw new NotImplementedException();
         }
 
+
+        /// 学生按班级id取消选择班级.
         public void DeleteCourseSelectionById(long userId, long classId)
         {
             throw new NotImplementedException();
@@ -98,12 +111,14 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
+                var url =" 1";    //？？？？
                 _userService.GetUserByUserId(userId);
                 GetClassByClassId(classId);
                 CourseSelection coursesele = new CourseSelection();
                 coursesele.Student.Id = userId;
                 coursesele.ClassInfo.Id = classId;
-                _classDao(coursesele);
+                _classDao.InsertSelection(coursesele);
+                return url;
             }
             catch (UserNotFoundException eu) { throw eu; }
             catch(ClassNotFoundException ec) { throw ec; }
