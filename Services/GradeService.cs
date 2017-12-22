@@ -19,19 +19,18 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             _iUserService = iUserService;
         }
 
-        public bool DeleteStudentScoreGroupByTopicId(long topicId)
+        public void DeleteStudentScoreGroupByTopicId(long topicId)
         {
             try
             {
                 _iGradeDao.DeleteStudentScoreGroupByTopicId(topicId);
-                return true;  //void
             }catch
             {
                 throw;
             }
         }
 
-        public bool InsertGroupGradeByUserId(long userId, long seminarId, long groupId, long grade)
+        public void InsertGroupGradeByUserId(long userId, long seminarId, long groupId, long grade)
         {
             try
             {
@@ -43,24 +42,23 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 
 
                 //_iGradeDao.InsertGroupGradeByUserId(userInfo, seminarGroupTopic, (int)grade);
-                return true;   //void
             }catch
             {
                 throw;
             }
         }
 
-        public List<long> ListSeminarGradeBySeminarGroupId(long userId, long seminarGroupId)
+        public List<int> ListSeminarGradeBySeminarGroupId(long userId, long seminarGroupId)
         {
             throw new NotImplementedException();
         }
 
-        public List<long> ListSeminarGradeByStudentId(long userId)
+        public List<int> ListSeminarGradeByStudentId(long userId)
         {
             throw new NotImplementedException();
         }
 
-        public bool UpdateGroupByGroupId(long seminarGroupId, long grade)
+        public void UpdateGroupByGroupId(long seminarGroupId, long grade)
         {
             try
             {
@@ -70,7 +68,6 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             {
                 throw;
             }
-            return true;
         }
     }
 }
