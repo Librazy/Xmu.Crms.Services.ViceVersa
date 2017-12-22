@@ -51,25 +51,48 @@ namespace Xmu.Crms.Services.ViceVersa
         /// 按classId删除CourseSelection表的一条记录.
         public void DeleteClassSelectionByClassId(long classId)
         {
-            throw new NotImplementedException();
+            _classDao.DeleteSelection(0, classId);
         }
 
 
         /// 学生按班级id取消选择班级.
         public void DeleteCourseSelectionById(long userId, long classId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                _userService.GetUserByUserId(userId);
+                GetClassByClassId(classId);
+                _classDao.DeleteSelection(userId, classId);
+
+            }catch(UserNotFoundException eu) { throw eu; }
+            catch (ClassNotFoundException ec) { throw ec; }
         }
 
+
+        /// 按classId删除ScoreRule.
         public void DeleteScoreRuleById(long classId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                ClassInfo newclass = new ClassInfo() { Id=classId};
+                newclass.ReportPercentage = 0;
+                newclass.PresentationPercentage = 0;
+                newclass.FivePointPercentage = 0;
+                newclass.FourPointPercentage = 0;
+                newclass.ThreePointPercentage = 0;
+                var result = _classDao.Update(newclass);
+                _classDao.Update(newclass);
+            }
+            catch (ClassNotFoundException e) { throw e; }
         }
 
+
+        /// 老师获取该班级签到、分组状态.
         public ClassInfo GetCallGroupStatusById(long seminarId)
         {
             throw new NotImplementedException();
         }
+
 
         /// 按班级id获取班级详情.
         public ClassInfo GetClassByClassId(long classId)
@@ -80,7 +103,7 @@ namespace Xmu.Crms.Services.ViceVersa
 
                 return classinfo;
             }
-            catch { throw; }
+            catch (ClassNotFoundException e){ throw e; }
         }
 
 
@@ -93,16 +116,21 @@ namespace Xmu.Crms.Services.ViceVersa
                
                 return classinfo;
             }
-            catch { throw; }
+            catch (ClassNotFoundException e) { throw e; }
         }
 
 
         /// 新建班级.  只修改了班级表
         public long InsertClassById(long userId, long courseId)
         {
-            ClassInfo newclass = new ClassInfo();
-            newclass.Course = _courseService.GetCourseByCourseId(courseId);
-            return _classDao.Save(newclass);
+            try
+            {
+                _userService.GetUserByUserId(userId);
+                ClassInfo newclass = new ClassInfo();
+                newclass.Course = _courseService.GetCourseByCourseId(courseId);
+                return _classDao.Save(newclass);    //返回classid
+            }catch(UserNotFoundException eu) { throw eu; }
+            catch(CourseNotFoundException ec) { throw ec; }
         }
 
 
@@ -131,11 +159,20 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
+                if (proportions.ReportPercentage < 0 || proportions.ReportPercentage > 100 ||
+                    proportions.PresentationPercentage < 0 || proportions.PresentationPercentage > 100 ||
+                    proportions.ReportPercentage + proportions.PresentationPercentage != 100 ||
+                    proportions.FivePointPercentage < 0 || proportions.FivePointPercentage > 10 ||
+                    proportions.FourPointPercentage < 0 || proportions.FourPointPercentage > 10 ||
+                    proportions.ThreePointPercentage < 0 || proportions.ThreePointPercentage > 10 ||
+                    proportions.FivePointPercentage + proportions.FourPointPercentage + proportions.ThreePointPercentage != 10)
+                    throw new InvalidOperationException();
                 var result = _classDao.Update(proportions);//新建班级时已经建了一个空的
                 if (result != 0) return -1;
                 return classId;
             }
-            catch (ClassNotFoundException e) { throw; }
+            catch (InvalidOperationException ei) { throw ei; }
+            catch (ClassNotFoundException ec) { throw ec; }
 
         }
 
@@ -145,10 +182,11 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
+                _courseService.GetCourseByCourseId(courseId);
                 List<ClassInfo> list = _classDao.QueryAll(courseId);
                 return list;
             }
-            catch(ClassNotFoundException e) { throw; }
+            catch(CourseNotFoundException e) { throw e; }
         }
 
 
@@ -157,7 +195,7 @@ namespace Xmu.Crms.Services.ViceVersa
         // 按课程名称和教师名称获取班级列表.
         public List<ClassInfo> ListClassByName(string courseName, string teacherName)
         {
-            throw new NotImplementedException();
+            
             List<ClassInfo> classList = null;
             if (courseName != null)
             {

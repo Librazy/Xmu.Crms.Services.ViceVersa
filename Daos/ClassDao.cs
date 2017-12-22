@@ -118,10 +118,31 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
 
-        //根据班级id删除学生选课表
+        //根据班级id学生id删除学生选课表
         public void DeleteSelection(long userId, long classId)
         {
-            throw new NotImplementedException();
+            using (var scope = new TransactionScope())
+            {
+                if (userId != 0)
+                {
+
+                    var c = _db.CourseSelection.SingleOrDefault<CourseSelection>(u => u.Student.Id == userId && u.ClassInfo.Id == classId);
+
+                    _db.CourseSelection.Attach(c);
+                    _db.CourseSelection.Remove(c);
+                    _db.SaveChanges();
+                }
+                else  //批量删除
+                {
+                    var t1 = _db.CourseSelection.Where(t => t.ClassInfo.Id == classId).ToList();
+                    foreach (var t in t1)
+                    {
+                        _db.CourseSelection.Remove(t);
+                    }
+                    _db.SaveChanges();
+                }
+                scope.Complete();
+            }
         }
     }
 }
