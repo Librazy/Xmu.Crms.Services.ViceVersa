@@ -112,7 +112,18 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 
         public List<ClassInfo> ListClassByUserId(long userId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Course> courseList=ListCourseByUserId(userId);
+                List<ClassInfo> classList = new List<ClassInfo>();
+                foreach (var i in courseList)
+                    classList.AddRange(_iClassService.ListClassByCourseId(i.Id));
+                return classList;
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public List<Course> ListCourseByCourseName(string courseName)

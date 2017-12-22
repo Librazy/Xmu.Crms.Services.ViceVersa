@@ -63,9 +63,9 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
             }
         }
 
-        public List<ClassInfo> ListClassByUserId(BigInteger userId)
+        public List<ClassInfo> ListClassByUserId(long userId)
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public List<Course> ListCourseByCourseName(string courseName)

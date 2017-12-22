@@ -110,6 +110,6 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
          * @exception CourseNotFoundException 未找到课程
          * @exception ClassNotFoundException 未找到班级
          */
-        List<ClassInfo> ListClassByUserId(BigInteger userId);
+        List<ClassInfo> ListClassByUserId(long userId);
     }
 }
