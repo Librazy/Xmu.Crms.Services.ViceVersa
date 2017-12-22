@@ -10,7 +10,7 @@ namespace Xmu.Crms.Services.ViceVersa
     class ClassService : IClassService
     {
         //private readonly ISeminarService _seminarService;
-        //private readonly ICourseService _courseService;
+        private readonly ICourseService _courseService;
 
         private readonly IClassDao _classDao;
         public  ClassService(IClassDao classDao)
@@ -94,27 +94,30 @@ namespace Xmu.Crms.Services.ViceVersa
             throw new NotImplementedException();
         }
 
-        ///// 按课程名称和教师名称获取班级列表.
+        // 按课程名称和教师名称获取班级列表.
         public List<ClassInfo> ListClassByName(string courseName, string teacherName)
         {
             throw new NotImplementedException();
-            //    List<ClassInfo> classList = null;
-            //    if (courseName!=null)
-            //    {
-            //      //  List<Course>courseList= _courseService.ListCourseByCourseName(courseName);
-            //        List<ClassInfo> templist=null;
-            //       // if (courseList == null) return null;
-            //       // foreach (Course c in courseList)
-            //        {
-            //            templist = _classDao.QueryAll(c.Id);
-            //            classList.AddRange(templist);
-            //        }
-            //    }
-            //    else if(teacherName!=null)
-            //    {
-            //       // List<Course> courseList = _courseService.ListClassByTeacherName(teacherName);
-            //    }
-            //    return classList;
+            List<ClassInfo> classList = null;
+            if (courseName != null)
+            {
+                List<Course>courseList= _courseService.ListCourseByCourseName(courseName);
+                List<ClassInfo> templist = null;
+                if (courseList == null) return null;
+                 foreach (Course c in courseList)
+                {
+                    templist = _classDao.QueryAll(c.Id);
+                    classList.AddRange(templist);
+                }
+            }
+            else if (teacherName != null)
+            {
+                long userId = 1;   //jwt？？？？？
+                 List<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
+                List<ClassInfo> studentClassList = _courseService.ListClassByUserId(userId);
+                foreach(ClassInfo c in teacherClassList)
+            }
+            return classList;
         }
 
         public void UpdateClassByClassId(long classId)
