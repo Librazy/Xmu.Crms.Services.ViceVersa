@@ -63,16 +63,6 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
             }
         }
 
-        public List<ClassInfo> ListClassByCourseName(string courseName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<ClassInfo> ListClassByTeacherName(string teacherName)
-        {
-            throw new NotImplementedException();
-        }
-
         public List<ClassInfo> ListClassByUserId(BigInteger userId)
         {
             throw new NotImplementedException();
@@ -80,7 +70,14 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
 
         public List<Course> ListCourseByCourseName(string courseName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Course> courseList = _db.Course.Include(c => c.Teacher).Where(c => c.Name == courseName).ToList();
+                return courseList;
+            }catch
+            {
+                throw;
+            }
         }
 
         public List<Course> ListCourseByUserId(BigInteger userId)

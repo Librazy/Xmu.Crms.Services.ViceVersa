@@ -14,11 +14,14 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         private readonly ICourseDao _iCourseDao;
         private readonly ISeminarService _iSeminarService;
         private readonly IClassService _iClassService;
+        private readonly IUserService _iUserService;
 
-        public CourseService(ICourseDao iCourseDao, ISeminarService iSeminarService, IClassService iClassService)
+        public CourseService(ICourseDao iCourseDao, ISeminarService iSeminarService, IClassService iClassService, IUserService iUserService)
         {
+            _iCourseDao = iCourseDao;
             _iSeminarService = iSeminarService;
             _iClassService = iClassService;
+            _iUserService = iUserService;
         }
 
         public void DeleteCourseByCourseId(long courseId)
@@ -75,12 +78,36 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 
         public List<ClassInfo> ListClassByCourseName(string courseName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //根据课程名获得对应的课程列表
+                List<Course> courseList = ListCourseByCourseName(courseName);
+                //根据课程id获得该课程下的班级
+                List<ClassInfo> classList = new List<ClassInfo>();
+                foreach (var i in courseList)
+                     classList.AddRange( _iClassService.ListClassByCourseId(i.Id));
+                return classList;
+            }catch
+            {
+                throw;
+            }
         }
 
         public List<ClassInfo> ListClassByTeacherName(string teacherName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<long> idList = _iUserService.ListUserIdByUserName(teacherName);
+                if (idList == null || idList.Count == 0)
+                    return null;
+                List<ClassInfo> classList = new List<ClassInfo>();
+                foreach (var i in idList)
+                    classList.AddRange(ListClassByUserId(i));
+                return classList;
+            }catch
+            {
+                throw;
+            }
         }
 
         public List<ClassInfo> ListClassByUserId(long userId)
@@ -90,7 +117,18 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 
         public List<Course> ListCourseByCourseName(string courseName)
         {
-            List<Course> courseList = _iCourseDao.ListCourseByCourseName(courseName);
+            try
+            {
+                List<Course> courseList = _iCourseDao.ListCourseByCourseName(courseName);
+                if (courseList == null || courseList.Count == 0)
+                {
+                    //throw new CourseNotFoundException();
+                }
+                return courseList;
+            }catch
+            {
+                throw;
+            }
         }
 
         public List<Course> ListCourseByUserId(long userId)
