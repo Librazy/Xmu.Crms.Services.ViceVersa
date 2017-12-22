@@ -20,7 +20,7 @@ namespace Xmu.Crms.Services.ViceVersa
             _schoolService = schoolService;
         }
 
-        public bool InsertAttendanceById(long classId, long seminarId, long userId, double longitude, double latitude)
+        public void InsertAttendanceById(long classId, long seminarId, long userId, double longitude, double latitude)
         {
             throw new NotImplementedException();
         }
@@ -44,12 +44,12 @@ namespace Xmu.Crms.Services.ViceVersa
             return us;
         }
 
-        public bool DeleteTeacherAccount(long userId)
+        public void DeleteTeacherAccount(long userId)
         {
             throw new NotImplementedException();
         }
 
-        public bool DeleteStudentAccount(long userId)
+        public void DeleteStudentAccount(long userId)
         {
             throw new NotImplementedException();
         }
@@ -73,7 +73,7 @@ namespace Xmu.Crms.Services.ViceVersa
             throw new NotImplementedException();
         }
 
-        public bool UpdateUserByUserId(long userId, UserInfo user)
+        public void UpdateUserByUserId(long userId, UserInfo user)
         {
             throw new NotImplementedException();
         }
