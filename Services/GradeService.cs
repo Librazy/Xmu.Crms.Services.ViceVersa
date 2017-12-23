@@ -19,6 +19,16 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             _iUserService = iUserService;
         }
 
+        public void CountGroupGradeBySerminarId(long seminarId, long seminarGroupId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CountPresentationGrade(long seminarId, long seminarGroupId)
+        {
+            throw new NotImplementedException();
+        }
+
         public void DeleteStudentScoreGroupByTopicId(long topicId)
         {
             try
@@ -30,7 +40,13 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
-        public void InsertGroupGradeByUserId(long userId, long seminarId, long groupId, long grade)
+        public SeminarGroup GetSeminarGroupBySeminarGroupId(long userId, long seminarGroupId)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        public void InsertGroupGradeByUserId(long topicId, long userId, long seminarId, long groupId, int grade)
         {
             try
             {
@@ -42,10 +58,16 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 
 
                 //_iGradeDao.InsertGroupGradeByUserId(userInfo, seminarGroupTopic, (int)grade);
-            }catch
+            }
+            catch
             {
                 throw;
             }
+        }
+
+        public List<SeminarGroup> ListSeminarGradeByCourseId(long userId, long courseId)
+        {
+            throw new NotImplementedException();
         }
 
         public List<int> ListSeminarGradeBySeminarGroupId(long userId, long seminarGroupId)
@@ -53,7 +75,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             throw new NotImplementedException();
         }
 
-        public List<int> ListSeminarGradeByStudentId(long userId)
+        public List<SeminarGroup> ListSeminarGradeByStudentId(long userId)
         {
             throw new NotImplementedException();
         }
@@ -69,5 +91,11 @@ namespace Xmu.Crms.Services.ViceVersa.Services
                 throw;
             }
         }
+
+        public void UpdateGroupByGroupId(long seminarGroupId, int grade)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }
