@@ -106,27 +106,32 @@ namespace Xmu.Crms.Services.ViceVersa
 
         public int Update(ClassInfo t)
         {
-            using (var scope = new TransactionScope())
+            using (var scope = _db.Database.BeginTransaction())
             {
+                try
+                {
 
-                ClassInfo c = _db.ClassInfo.Where(u => u.Id == t.Id).SingleOrDefault<ClassInfo>();
-                if (c == null) throw new ClassNotFoundException();
-                c.Name = t.Name;
-                c.Course = t.Course;
-                c.Site = t.Site;
-                c.ClassTime = t.ClassTime;
-                c.ReportPercentage = t.ReportPercentage;
-                c.PresentationPercentage = t.PresentationPercentage;
-                c.FivePointPercentage = t.FivePointPercentage;
-                c.FourPointPercentage = t.FourPointPercentage;
-                c.ThreePointPercentage = t.ThreePointPercentage;
+                    ClassInfo c = _db.ClassInfo.Where(u => u.Id == t.Id).SingleOrDefault<ClassInfo>();
+                    if (c == null) throw new ClassNotFoundException();
+                    c.Name = t.Name;
+                    c.Course = t.Course;
+                    c.Site = t.Site;
+                    c.ClassTime = t.ClassTime;
+                    c.ReportPercentage = t.ReportPercentage;
+                    c.PresentationPercentage = t.PresentationPercentage;
+                    c.FivePointPercentage = t.FivePointPercentage;
+                    c.FourPointPercentage = t.FourPointPercentage;
+                    c.ThreePointPercentage = t.ThreePointPercentage;
 
-                _db.Entry(c).State = EntityState.Modified;
-                _db.SaveChanges();
+                    _db.Entry(c).State = EntityState.Modified;
+                    _db.SaveChanges();
 
-                scope.Complete();
-                return 0;
+                    scope.Commit();
+                    return 0;
+                }
+                catch(ClassNotFoundException e) { scope.Rollback();throw e; }
             }
+            
         }
 
 

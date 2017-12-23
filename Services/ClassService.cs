@@ -103,7 +103,7 @@ namespace Xmu.Crms.Services.ViceVersa
 
 
         /// 按班级id获取班级详情.
-        public ClassInfo GetClassByClassId(long classId)
+         public ClassInfo GetClassByClassId(long classId)
         {
             try
             {
