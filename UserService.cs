@@ -25,7 +25,7 @@ namespace Xmu.Crms.Services.ViceVersa
             throw new NotImplementedException();
         }
 
-        public List<Attendance> ListAttendanceById(long classId, long seminarId)
+        public IList<Attendance> ListAttendanceById(long classId, long seminarId)
         {
             throw new NotImplementedException();
         }
@@ -68,7 +68,7 @@ namespace Xmu.Crms.Services.ViceVersa
             return user;
         }
 
-        public List<long> ListUserIdByUserName(string userName)
+        public IList<long> ListUserIdByUserName(string userName)
         {
             throw new NotImplementedException();
         }
@@ -78,32 +78,32 @@ namespace Xmu.Crms.Services.ViceVersa
             throw new NotImplementedException();
         }
 
-        public List<UserInfo> ListUserByClassId(long classId, string numBeginWith, string nameBeginWith)
+        public IList<UserInfo> ListUserByClassId(long classId, string numBeginWith, string nameBeginWith)
         {
             throw new NotImplementedException();
         }
 
-        public List<UserInfo> ListUserByUserName(string userName)
+        public IList<UserInfo> ListUserByUserName(string userName)
         {
             throw new NotImplementedException();
         }
 
-        public List<UserInfo> ListPresentStudent(long seminarId, long classId)
+        public IList<UserInfo> ListPresentStudent(long seminarId, long classId)
         {
             throw new NotImplementedException();
         }
 
-        public List<UserInfo> ListAbsenceStudent(long seminarId, long classId)
+        public IList<UserInfo> ListAbsenceStudent(long seminarId, long classId)
         {
             throw new NotImplementedException();
         }
 
-        public List<Course> ListCourseByTeacherName(string teacherName)
+        public IList<Course> ListCourseByTeacherName(string teacherName)
         {
             throw new NotImplementedException();
         }
 
-        public List<UserInfo> ListLateStudent(long seminarId, long classId)
+        public IList<UserInfo> ListLateStudent(long seminarId, long classId)
         {
             throw new NotImplementedException();
         }

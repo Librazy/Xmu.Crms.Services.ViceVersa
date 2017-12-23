@@ -74,22 +74,14 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
          * @exception InfoIllegalException courseId格式错误时抛出
          * @exception CourseNotFoundException 未找到课程
          */
+        /// <summary>
+        /// 根据课程名称获取课程列表.
+        /// @author YeXiaona
+        /// </summary>
+        /// <param name="courseName">课程名称</param>
+        /// <returns>list 课程列表</returns>
+        /// <seealso cref="M:Xmu.Crms.Shared.Service.ICourseService.GetCourseByCourseId(System.Int64)"/>
         List<Course> ListCourseByCourseName(String courseName);
-
-
-        /**
-         * 按课程名称获取班级列表.
-         * <p>根据课程名获取课程ID，通过课程ID获取班级列表<br>
-         * @author YeXiaona
-         * @param courseName 课程名称
-         * @return list 班级列表
-         * @see CourseService #listCourseByCourseName(String courseName)
-         * @see ClassService #listClassByCourseId(BigInteger courseId)
-         * @exception InfoIllegalException courseId格式错误时抛出
-         * @exception CourseNotFoundException 未找到课程
-         * @exception ClassNotFoundException 未找到班级
-         */
-        List<ClassInfo> ListClassByCourseName(String courseName);
 
 
         /**
@@ -104,7 +96,6 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
          * @exception CourseNotFoundException 未找到课程
          * @exception ClassNotFoundException 未找到班级
          */
-        List<ClassInfo> ListClassByTeacherName(String teacherName);
 
 
         /**
@@ -119,6 +110,6 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
          * @exception CourseNotFoundException 未找到课程
          * @exception ClassNotFoundException 未找到班级
          */
-        List<ClassInfo> ListClassByUserId(BigInteger userId);
+        List<ClassInfo> ListClassByUserId(long userId);
     }
 }

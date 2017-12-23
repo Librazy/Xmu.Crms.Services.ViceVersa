@@ -63,24 +63,21 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
             }
         }
 
-        public List<ClassInfo> ListClassByCourseName(string courseName)
+        public List<ClassInfo> ListClassByUserId(long userId)
         {
-            throw new NotImplementedException();
-        }
-
-        public List<ClassInfo> ListClassByTeacherName(string teacherName)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<ClassInfo> ListClassByUserId(BigInteger userId)
-        {
-            throw new NotImplementedException();
+            return null;
         }
 
         public List<Course> ListCourseByCourseName(string courseName)
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<Course> courseList = _db.Course.Include(c => c.Teacher).Where(c => c.Name == courseName).ToList();
+                return courseList;
+            }catch
+            {
+                throw;
+            }
         }
 
         public List<Course> ListCourseByUserId(BigInteger userId)
@@ -116,9 +113,16 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                 {
                     throw new CourseNotFoundException();
                 }
-                //更新该课程
-                cour = course;
-                cour.Id = courseId; //???
+                //更新该课程(更新界面上能够更改的内容)
+                cour.Name = course.Name;
+                cour.StartDate = course.StartDate;
+                cour.EndDate = course.EndDate;
+                cour.Description = course.Description;
+                cour.ThreePointPercentage = course.ThreePointPercentage;
+                cour.FourPointPercentage = course.FourPointPercentage;
+                cour.FivePointPercentage = course.FivePointPercentage;
+                cour.ReportPercentage = course.ReportPercentage;
+                cour.PresentationPercentage = course.PresentationPercentage;
                 _db.SaveChanges();
             }catch
             {

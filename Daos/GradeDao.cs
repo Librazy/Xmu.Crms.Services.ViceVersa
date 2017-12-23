@@ -27,33 +27,43 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                 //删除
                 _db.StudentScoreGroup.Remove(ssg);
                 _db.SaveChanges();
-            }catch
+            }
+            catch
             {
                 throw;
             }
         }
-
-        public void InsertGroupGradeByUserId(UserInfo userInfo, SeminarGroupTopic seminarGroupTopic, int grade)
+        //userId有用吗？
+        public SeminarGroup GetSeminarGroupBySeminarGroupId(long userId, long seminarGroupId)
+        {
+            try
+            {
+                SeminarGroup group = _db.SeminarGroup.SingleOrDefault(c => c.Id == seminarGroupId);
+                return group;
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        //不用写，调用其他的
+        public List<SeminarGroup> ListSeminarGradeByCourseId(long userId, long courseId)
+        {
+            return null;
+        }
+        //先在seminarGroupTopic 和userinfo service查好，在这里传入实体对象seminarGroupTopic，userInfo
+        public void InsertGroupGradeByUserId(SeminarGroupTopic seminarGroupTopic, UserInfo userInfo, int grade)
         {
             try
             {
                 StudentScoreGroup ssg = new StudentScoreGroup { Student = userInfo, SeminarGroupTopic = seminarGroupTopic, Grade = grade };
                 _db.StudentScoreGroup.Add(ssg);
                 _db.SaveChanges();
-            } catch
+            }
+            catch
             {
                 throw;
             }
-        }
-
-        public List<long> ListSeminarGradeBySeminarGroupId(long userId, long seminarGroupId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public List<long> ListSeminarGradeByStudentId(long userId)
-        {
-            throw new NotImplementedException();
         }
 
         public void UpdateGroupByGroupId(long seminarGroupId, int grade)
@@ -69,10 +79,27 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                 //更新报告分
                 seminarGroup.ReportGrade = grade;
                 _db.SaveChanges();
-            }catch
+            }
+            catch
             {
                 throw;
             }
         }
+
+        public List<SeminarGroup> ListSeminarGradeByStudentId(long userId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CountPresentationGrade(long seminarId, long seminarGroupId)
+        {
+
+        }
+
+        public void CountGroupGradeBySerminarId(long seminarId, long seminarGroupId)
+        {
+
+        }
+
     }
 }
