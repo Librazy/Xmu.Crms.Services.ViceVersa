@@ -41,7 +41,7 @@ namespace Xmu.Crms.Services.ViceVersa
         public ClassInfo Get(long id)
         {
 
-            ClassInfo classinfo = _db.ClassInfo.Where(u => u.Id == id).SingleOrDefault<ClassInfo>();
+            ClassInfo classinfo = _db.ClassInfo.Include(u=>u.Course).Where(u => u.Id == id).SingleOrDefault<ClassInfo>();
             if (classinfo == null)
             {
                 throw new ClassNotFoundException();
@@ -67,15 +67,19 @@ namespace Xmu.Crms.Services.ViceVersa
         //添加班级返回id
         public long Save(ClassInfo t)
         {
-            using (var scope = new TransactionScope())
+            using (var scope = _db.Database.BeginTransaction())
             {
+                try
+                {
 
-                _db.ClassInfo.Add(t);
+                    _db.ClassInfo.Add(t);
 
-                _db.SaveChanges();
+                    _db.SaveChanges();
 
-                scope.Complete();
-                return t.Id;
+                    scope.Commit();
+                    return t.Id;
+                }
+                catch { scope.Rollback(); throw; }
             }
 
         }

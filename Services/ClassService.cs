@@ -131,6 +131,14 @@ namespace Xmu.Crms.Services.ViceVersa
             {
                 //_userService.GetUserByUserId(userId);
                 //classInfo.Course = _courseService.GetCourseByCourseId(courseId);
+                if (classInfo.ReportPercentage < 0 || classInfo.ReportPercentage > 100 ||
+                   classInfo.PresentationPercentage < 0 || classInfo.PresentationPercentage > 100 ||
+                   classInfo.ReportPercentage + classInfo.PresentationPercentage != 100 ||
+                   classInfo.FivePointPercentage < 0 || classInfo.FivePointPercentage > 10 ||
+                   classInfo.FourPointPercentage < 0 || classInfo.FourPointPercentage > 10 ||
+                   classInfo.ThreePointPercentage < 0 || classInfo.ThreePointPercentage > 10 ||
+                   classInfo.FivePointPercentage + classInfo.FourPointPercentage + classInfo.ThreePointPercentage != 10)
+                    throw new InvalidOperationException();
                 return _classDao.Save(classInfo);    //返回classid
 
             }catch(UserNotFoundException eu) { throw eu; }
