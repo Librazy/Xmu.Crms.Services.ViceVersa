@@ -106,11 +106,6 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                 cour.StartDate = course.StartDate;
                 cour.EndDate = course.EndDate;
                 cour.Description = course.Description;
-                cour.ThreePointPercentage = course.ThreePointPercentage;
-                cour.FourPointPercentage = course.FourPointPercentage;
-                cour.FivePointPercentage = course.FivePointPercentage;
-                cour.ReportPercentage = course.ReportPercentage;
-                cour.PresentationPercentage = course.PresentationPercentage;
                 _db.SaveChanges();
             }catch
             {
