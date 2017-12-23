@@ -12,21 +12,17 @@ namespace Xmu.Crms.Services.ViceVersa.Services
     {
         private readonly IGradeDao _iGradeDao;
         private readonly IUserService _iUserService;
+        private readonly ITopicService _iTopicService;
+        private readonly ISeminarGroupService _iSeminarGroupService;
+        private readonly ISeminarService _iSeminarService;
 
-        public GradeService(IGradeDao iGradeDao, IUserService iUserService)
+        public GradeService(IGradeDao iGradeDao, IUserService iUserService, ITopicService iTopicService, ISeminarGroupService iSeminarGroupService, ISeminarService iSeminarService)
         {
             _iGradeDao = iGradeDao;
             _iUserService = iUserService;
-        }
-
-        public void CountGroupGradeBySerminarId(long seminarId, long seminarGroupId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CountPresentationGrade(long seminarId, long seminarGroupId)
-        {
-            throw new NotImplementedException();
+            _iTopicService = iTopicService;
+            _iSeminarGroupService = iSeminarGroupService;
+            _iSeminarService = iSeminarService;
         }
 
         public void DeleteStudentScoreGroupByTopicId(long topicId)
@@ -34,7 +30,8 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             try
             {
                 _iGradeDao.DeleteStudentScoreGroupByTopicId(topicId);
-            }catch
+            }
+            catch
             {
                 throw;
             }
@@ -42,22 +39,9 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 
         public SeminarGroup GetSeminarGroupBySeminarGroupId(long userId, long seminarGroupId)
         {
-            throw new NotImplementedException();
-        }
-
-
-        public void InsertGroupGradeByUserId(long topicId, long userId, long seminarId, long groupId, int grade)
-        {
-            try
+            try//此处userId无用，将改
             {
-                //调用UserService中方法
-                UserInfo userInfo = _iUserService.GetUserByUserId(userId);
-
-                //调用TopicService中的方法
-                SeminarGroupTopic seminarGroupTopic;
-
-
-                //_iGradeDao.InsertGroupGradeByUserId(userInfo, seminarGroupTopic, (int)grade);
+                return _iGradeDao.GetSeminarGroupBySeminarGroupId(seminarGroupId);
             }
             catch
             {
@@ -67,17 +51,43 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 
         public IList<SeminarGroup> ListSeminarGradeByCourseId(long userId, long courseId)
         {
-            throw new NotImplementedException();
+            List<SeminarGroup> seminarGroupList = new List<SeminarGroup>();
+            List<Seminar> seminarList = new List<Seminar>();
+            try
+            {
+                //调用SeminarService 中 IList<Seminar> ListSeminarByCourseId(long courseId)方法
+                _iSeminarService.ListSeminarByCourseId(courseId);
+
+                //调用SeminarGroupService 中 SeminarGroup GetSeminarGroupById(long seminarId, long userId)
+                for (int i = 0; i < seminarList.Count; i++)
+                {
+                    seminarGroupList.Add(_iSeminarGroupService.GetSeminarGroupById(seminarList[0].Id, userId));
+                }
+            }
+            catch
+            {
+                throw;
+            }
+            return seminarGroupList;
         }
 
-        //public List<int> ListSeminarGradeBySeminarGroupId(long userId, long seminarGroupId)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        public IList<SeminarGroup> ListSeminarGradeByStudentId(long userId)
+        public void InsertGroupGradeByUserId(long topicId, long userId,long seminar, long groupId, int grade)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //调用TopicService中GetSeminarGroupTopicById(long topicId, long groupId)方法 
+                SeminarGroupTopic seminarGroupTopic = _iTopicService.GetSeminarGroupTopicById(topicId, groupId);
+
+                //调用UserService中的GetUserByUserId(long userId)方法
+                UserInfo userInfo = _iUserService.GetUserByUserId(userId);
+
+                //调用自己的dao
+                _iGradeDao.InsertGroupGradeByUserId(seminarGroupTopic, userInfo, grade);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public void UpdateGroupByGroupId(long seminarGroupId, int grade)
@@ -90,6 +100,33 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             {
                 throw;
             }
+        }
+
+        public IList<SeminarGroup> ListSeminarGradeByStudentId(long userId)
+        {
+            try
+            {
+                return _iSeminarGroupService.ListSeminarGroupIdByStudentId(userId);
+            }
+            catch
+            {
+                throw;
+            }
+
+        }
+
+        public void CountGroupGradeBySerminarId(long seminarId, long seminarGroupId)
+        {
+            _iGradeDao.CountGroupGradeBySerminarId(seminarId,seminarGroupId);
+        }
+
+        public void CountPresentationGrade(long seminarId, long seminarGroupId)
+        { 
+            //调用TopicService 的 IList<Topic> ListTopicBySeminarId(long seminarId)方法
+            IList<Topic> topicList = _iTopicService.ListTopicBySeminarId(seminarId);
+
+            //调用自己的dao分别对每个topic计算
+            _iGradeDao.CountPresentationGrade(seminarId, topicList);
         }
 
     }

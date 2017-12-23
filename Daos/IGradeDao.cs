@@ -24,7 +24,7 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         /// <returns>seminarGroup 讨论课小组信息（包括成绩）</returns>
         /// <exception cref="T:System.ArgumentException">id格式错误</exception>
         /// <exception cref="T:Xmu.Crms.Shared.Exceptions.GroupNotFoundException">未找到小组</exception>
-        SeminarGroup GetSeminarGroupBySeminarGroupId(long userId, long seminarGroupId);
+        SeminarGroup GetSeminarGroupBySeminarGroupId(long seminarGroupId);
 
         /// <summary>
         /// 按课程id获取学生该课程所有讨论课
@@ -75,7 +75,7 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         /// <param name="seminarId">讨论课id</param>
         /// <param name="seminarGroupId">讨论课组id</param>
         /// <exception cref="T:System.ArgumentException">id格式错误</exception>
-        void CountPresentationGrade(long seminarId, long seminarGroupId);
+        void CountPresentationGrade(long seminarId, IList<Topic> topicList);
 
         /// <summary>
         /// 定时器方法:讨论课结束后计算本次讨论课得分.
