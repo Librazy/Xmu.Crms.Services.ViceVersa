@@ -157,8 +157,14 @@ namespace Xmu.Crms.Services.ViceVersa
             {
                 var url =" 1";    //？？？？
                 //_userService.GetUserByUserId(userId);
-                GetClassByClassId(classId);
-                CourseSelection coursesele = new CourseSelection();
+                ClassInfo classinfo= GetClassByClassId(classId);
+                //找到该班级所属课程下的所有班级
+                IList<ClassInfo> classList = ListClassByCourseId(classinfo.Course.Id);
+                foreach(ClassInfo c in classList)
+                {
+
+                }
+               CourseSelection coursesele = new CourseSelection();
                 coursesele.Student.Id = userId;
                 coursesele.ClassInfo.Id = classId;
                 _classDao.InsertSelection(coursesele);
