@@ -77,21 +77,12 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         }
 
 
-        public List<Course> ListCourseByUserId(BigInteger userId)
+        public List<Course> ListCourseByUserId(long userId)
         {
             List<Course> courseList = null;
             try
             {
-                //获得对应的选课信息
-                var selectionList = _db.CourseSelection.Include(u=>u.ClassInfo).Include(u=>u.ClassInfo.Course).Where(u => u.Student.Id == userId).ToList();
-                if (selectionList != null)
-                {
-                    courseList = new List<Course>();
-                    foreach (var i in selectionList)
-                    {
-                        courseList.Add(i.ClassInfo.Course);
-                    }
-                }
+                courseList = _db.Course.Where(u => u.Teacher.Id == userId).ToList();
             }
             catch
             {

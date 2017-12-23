@@ -138,6 +138,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
                 if (courseList == null || courseList.Count == 0)
                 {
                     //throw new CourseNotFoundException();
+                    return null;
                 }
                 return courseList;
             }catch
@@ -163,14 +164,10 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         }
 
         public void UpdateCourseByCourseId(long courseId, Course course)
-        {
+        {//Transaction???
             try
             {
-                using (var scope = new TransactionScope())
-                {
-                    _iCourseDao.UpdateCourseByCourseId(courseId, course);
-                    scope.Complete();
-                }
+                _iCourseDao.UpdateCourseByCourseId(courseId, course);
             }catch
             {
                 throw;

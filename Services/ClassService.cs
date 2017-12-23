@@ -208,7 +208,7 @@ namespace Xmu.Crms.Services.ViceVersa
                 List<ClassInfo> list = _classDao.QueryAll(courseId);
                 return list;
             }
-            catch(CourseNotFoundException e) { throw e; }
+            catch(ClassNotFoundException e) { throw e; }
         }
 
 

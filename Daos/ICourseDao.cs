@@ -17,7 +17,7 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
          * @exception ArgumentException userId格式错误时抛出
          * @exception CourseNotFoundException 未找到课程
          */
-        List<Course> ListCourseByUserId(BigInteger userId);
+        List<Course> ListCourseByUserId(long userId);
 
 
         /// <summary>
