@@ -21,21 +21,21 @@ namespace Xmu.Crms.Services.ViceVersa
         //删除班级
         public void Delete(long id)
         {
-            using (var scope = _db.Database.BeginTransaction())
-            {
-                try
-                {
+            //using (var scope = _db.Database.BeginTransaction())
+            //{
+                //try
+                //{
                     ClassInfo c = _db.ClassInfo.Where(u => u.Id == id).SingleOrDefault<ClassInfo>();
                     if (c == null) throw new ClassNotFoundException();
-                    
+                     
                     _db.ClassInfo.Attach(c);
                     _db.ClassInfo.Remove(c);
                     _db.SaveChanges();
-                    scope.Commit();
-                }
-                catch (ClassNotFoundException e) { scope.Rollback(); throw e; }
+            //        scope.Commit();
+            //    }
+            //    catch (ClassNotFoundException e) { scope.Rollback(); throw e; }
 
-            }
+            //}
         }
 
         public ClassInfo Get(long id)
@@ -55,7 +55,7 @@ namespace Xmu.Crms.Services.ViceVersa
         public List<ClassInfo> QueryAll(long id)
         {
 
-            List<ClassInfo> list = _db.ClassInfo.Where(u => u.Course.Id == id).ToList<ClassInfo>();
+            List<ClassInfo> list = _db.ClassInfo.Include(u => u.Course).Where(u => u.Course.Id == id).ToList<ClassInfo>();
             if (list == null)
             {
                 throw new ClassNotFoundException();
@@ -87,15 +87,19 @@ namespace Xmu.Crms.Services.ViceVersa
         //添加学生选课表返回id
         public long InsertSelection(CourseSelection t)
         {
-            using (var scope = new TransactionScope())
+            using (var scope = _db.Database.BeginTransaction())
             {
+                try
+                {
 
-                _db.CourseSelection.Add(t);
+                    _db.CourseSelection.Add(t);
 
-                _db.SaveChanges();
+                    _db.SaveChanges();
 
-                scope.Complete();
-                return t.Id;
+                    scope.Commit();
+                    return t.Id;
+                }
+                catch { scope.Rollback(); throw; }
             }
 
         }
@@ -149,6 +153,7 @@ namespace Xmu.Crms.Services.ViceVersa
                         {
                             _db.CourseSelection.Remove(t);
                         }
+                        Delete(classId);
                         _db.SaveChanges();
                     }
                     scope.Commit();

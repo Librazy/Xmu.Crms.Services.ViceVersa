@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Transactions;
 using Xmu.Crms.Services.ViceVersa.Daos;
 using Xmu.Crms.Shared.Exceptions;
 using Xmu.Crms.Shared.Models;
@@ -24,15 +25,18 @@ namespace Xmu.Crms.Services.ViceVersa
         /// 按班级id删除班级.
         public void DeleteClassByClassId(long classId)
         {
-            try
-            {
+                try
+                {
                 DeleteClassSelectionByClassId(classId);
-                _classDao.Delete(classId);
-            }
-            catch (ClassNotFoundException ec)
-            {
-                throw ec;
-            }
+                //_classDao.Delete(classId);
+                    
+                }
+                catch (ClassNotFoundException ec)
+                {
+                    
+                    throw ec;
+                }
+            
         }
 
 
