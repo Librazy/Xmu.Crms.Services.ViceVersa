@@ -102,5 +102,10 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             throw new NotImplementedException();
         }
+
+        public List<UserInfo> ListLateStudent(long seminarId, long classId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
