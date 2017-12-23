@@ -137,7 +137,7 @@ namespace Xmu.Crms.Services.ViceVersa
             {
                 try
                 {
-                    if (userId != 0)
+                    if (userId != 0)//单个学生取消选课
                     {
 
                         CourseSelection c = _db.CourseSelection.SingleOrDefault<CourseSelection>(u => u.Student.Id == userId && u.ClassInfo.Id == classId);
@@ -146,7 +146,7 @@ namespace Xmu.Crms.Services.ViceVersa
                         _db.CourseSelection.Remove(c);
                         _db.SaveChanges();
                     }
-                    else  //批量删除
+                    else  //删除班级时 批量删除
                     {
                         List<CourseSelection> t1 = _db.CourseSelection.Where(t => t.ClassInfo.Id == classId).ToList<CourseSelection>();
                         foreach (CourseSelection t in t1)
