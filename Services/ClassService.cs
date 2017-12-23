@@ -194,7 +194,7 @@ namespace Xmu.Crms.Services.ViceVersa
 
 
         /// 根据课程ID获得班级列表.
-        public List<ClassInfo> ListClassByCourseId(long courseId)
+        public IList<ClassInfo> ListClassByCourseId(long courseId)
         {
             try
             {
@@ -209,7 +209,7 @@ namespace Xmu.Crms.Services.ViceVersa
 
 
         // 按课程名称和教师名称获取班级列表.
-        public List<ClassInfo> ListClassByName(string courseName, string teacherName)
+        public IList<ClassInfo> ListClassByName(string courseName, string teacherName)
         {
             try
             {
