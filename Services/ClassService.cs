@@ -262,7 +262,7 @@ namespace Xmu.Crms.Services.ViceVersa
 
 
         /// 按班级id和班级修改班级信息.
-        public void UpdateClassByClassId(long classId)
+        public void UpdateClassByClassId(long classId,ClassInfo classInfo)
         {
             //try
             //{
