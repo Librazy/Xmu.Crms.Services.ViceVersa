@@ -71,7 +71,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             return seminarGroupList;
         }
 
-        public void InsertGroupGradeByUserId(long topicId, long userId,long seminar, long groupId, int grade)
+        public void InsertGroupGradeByUserId(long topicId, long userId,long groupId, int grade)
         {
             try
             {
