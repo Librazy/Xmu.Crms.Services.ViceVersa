@@ -40,7 +40,7 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         {
             try
             {
-                Course course = _db.Course.SingleOrDefault(c => c.Id == courseId);
+                Course course = _db.Course.Include(c=>c.Teacher).SingleOrDefault(c => c.Id == courseId);
                 return course;
             }
             catch
@@ -49,7 +49,7 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
             }
         }
 
-        public long InsertCourseByUserId(long userId, Course course)
+        public long InsertCourseByUserId(Course course)
         {
             try
             {
@@ -63,10 +63,6 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
             }
         }
 
-        public List<ClassInfo> ListClassByUserId(long userId)
-        {
-            return null;
-        }
 
         public List<Course> ListCourseByCourseName(string courseName)
         {
@@ -79,6 +75,7 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                 throw;
             }
         }
+
 
         public List<Course> ListCourseByUserId(BigInteger userId)
         {

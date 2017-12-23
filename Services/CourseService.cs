@@ -12,16 +12,16 @@ namespace Xmu.Crms.Services.ViceVersa.Services
     class CourseService : ICourseService
     {
         private readonly ICourseDao _iCourseDao;
-        private readonly ISeminarService _iSeminarService;
+        //private readonly ISeminarService _iSeminarService;
         private readonly IClassService _iClassService;
-        private readonly IUserService _iUserService;
+        //private readonly IUserService _iUserService;
 
-        public CourseService(ICourseDao iCourseDao, ISeminarService iSeminarService, IClassService iClassService, IUserService iUserService)
+        public CourseService(ICourseDao iCourseDao,IClassService iClassService)
         {
             _iCourseDao = iCourseDao;
-            _iSeminarService = iSeminarService;
+            //_iSeminarService = iSeminarService;
             _iClassService = iClassService;
-            _iUserService = iUserService;
+            //_iUserService = iUserService;
         }
 
         public void DeleteCourseByCourseId(long courseId)
@@ -34,7 +34,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
                     //删除course下的class
                     _iClassService.DeleteClassByCourseId(courseId);
                     //删除course下的seminar
-                    _iSeminarService.DeleteSeminarByCourseId(courseId);
+                    //_iSeminarService.DeleteSeminarByCourseId(courseId);
                     //删除course
                     _iCourseDao.DeleteCourseByCourseId(courseId);
                     scope.Complete();
@@ -68,7 +68,10 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         {
             try
             {
-                long courseId = _iCourseDao.InsertCourseByUserId(userId, course);
+                //根据userId找出teacher
+                //UserInfo teacher = _iUserService.GetUserByUserId(userId);  //会抛出ArgumentException和UserNotFoundException
+                //course.Teacher = teacher;
+                long courseId = _iCourseDao.InsertCourseByUserId(course);
                 return courseId;
             }catch
             {
@@ -97,7 +100,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         {
             try
             {
-                IList<long> idList = _iUserService.ListUserIdByUserName(teacherName);
+                IList<long> idList = null;// _iUserService.ListUserIdByUserName(teacherName);
                 if (idList == null || idList.Count == 0)
                     return null;
                 List<ClassInfo> classList = new List<ClassInfo>();
@@ -110,14 +113,15 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
+        //移到classService
         public IList<ClassInfo> ListClassByUserId(long userId)
         {
             try
             {
-                IList<Course> courseList=ListCourseByUserId(userId);
-                List<ClassInfo> classList = new List<ClassInfo>();
-                foreach (var i in courseList)
-                    classList.AddRange(_iClassService.ListClassByCourseId(i.Id));
+                List<ClassInfo> classList = null;// _iCourseDao.ListClassByUserId(userId);
+                //没有查到
+                if (classList == null || classList.Count == 0)
+                    throw new ClassNotFoundException();
                 return classList;
             }
             catch

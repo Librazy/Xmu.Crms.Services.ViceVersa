@@ -28,7 +28,7 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         /// <param name="course">课程信息</param>
         /// <returns>courseId 新建课程的id</returns>
         /// <exception cref="T:System.ArgumentException">userId格式错误时抛出</exception>
-        long InsertCourseByUserId(long userId, Course course);
+        long InsertCourseByUserId(Course course);
 
 
         /**
@@ -110,6 +110,6 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
          * @exception CourseNotFoundException 未找到课程
          * @exception ClassNotFoundException 未找到班级
          */
-        List<ClassInfo> ListClassByUserId(long userId);
+        //List<ClassInfo> ListClassByUserId(long userId);
     }
 }

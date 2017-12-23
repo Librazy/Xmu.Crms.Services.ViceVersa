@@ -166,5 +166,26 @@ namespace Xmu.Crms.Services.ViceVersa
                 catch { scope.Rollback(); }
             }
         }
+
+        public List<ClassInfo> ListClassByUserId(long userId)
+        {
+            try
+            {
+                var selectionList = _db.CourseSelection.Include(c => c.Student).Include(c=>c.ClassInfo).Where(c => c.Student.Id == userId);
+                //找不到对应的选课信息
+                if (selectionList == null)
+                    return null;
+
+                //根据classId获得对应的class
+                List<ClassInfo> classList = new List<ClassInfo>();
+                foreach (var i in selectionList)
+                    classList.Add(Get(i.ClassInfo.Id));
+                return classList;
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }
