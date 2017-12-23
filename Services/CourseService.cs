@@ -76,12 +76,12 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
-        public List<ClassInfo> ListClassByCourseName(string courseName)
+        public IList<ClassInfo> ListClassByCourseName(string courseName)
         {
             try
             {
                 //根据课程名获得对应的课程列表
-                List<Course> courseList = ListCourseByCourseName(courseName);
+                IList<Course> courseList = ListCourseByCourseName(courseName);
                 //根据课程id获得该课程下的班级
                 List<ClassInfo> classList = new List<ClassInfo>();
                 foreach (var i in courseList)
@@ -93,11 +93,11 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
-        public List<ClassInfo> ListClassByTeacherName(string teacherName)
+        public IList<ClassInfo> ListClassByTeacherName(string teacherName)
         {
             try
             {
-                List<long> idList = _iUserService.ListUserIdByUserName(teacherName);
+                IList<long> idList = _iUserService.ListUserIdByUserName(teacherName);
                 if (idList == null || idList.Count == 0)
                     return null;
                 List<ClassInfo> classList = new List<ClassInfo>();
@@ -110,11 +110,11 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
-        public List<ClassInfo> ListClassByUserId(long userId)
+        public IList<ClassInfo> ListClassByUserId(long userId)
         {
             try
             {
-                List<Course> courseList=ListCourseByUserId(userId);
+                IList<Course> courseList=ListCourseByUserId(userId);
                 List<ClassInfo> classList = new List<ClassInfo>();
                 foreach (var i in courseList)
                     classList.AddRange(_iClassService.ListClassByCourseId(i.Id));
@@ -126,11 +126,11 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
-        public List<Course> ListCourseByCourseName(string courseName)
+        public IList<Course> ListCourseByCourseName(string courseName)
         {
             try
             {
-                List<Course> courseList = _iCourseDao.ListCourseByCourseName(courseName);
+                IList<Course> courseList = _iCourseDao.ListCourseByCourseName(courseName);
                 if (courseList == null || courseList.Count == 0)
                 {
                     //throw new CourseNotFoundException();
@@ -142,7 +142,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
-        public List<Course> ListCourseByUserId(long userId)
+        public IList<Course> ListCourseByUserId(long userId)
         {
             try
             {

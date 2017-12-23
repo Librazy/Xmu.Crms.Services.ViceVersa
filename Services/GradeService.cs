@@ -65,36 +65,31 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
-        public List<SeminarGroup> ListSeminarGradeByCourseId(long userId, long courseId)
+        public IList<SeminarGroup> ListSeminarGradeByCourseId(long userId, long courseId)
         {
             throw new NotImplementedException();
         }
 
-        public List<int> ListSeminarGradeBySeminarGroupId(long userId, long seminarGroupId)
+        //public List<int> ListSeminarGradeBySeminarGroupId(long userId, long seminarGroupId)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public IList<SeminarGroup> ListSeminarGradeByStudentId(long userId)
         {
             throw new NotImplementedException();
         }
 
-        public List<SeminarGroup> ListSeminarGradeByStudentId(long userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateGroupByGroupId(long seminarGroupId, long grade)
+        public void UpdateGroupByGroupId(long seminarGroupId, int grade)
         {
             try
             {
-                _iGradeDao.UpdateGroupByGroupId(seminarGroupId, (int)grade);
+                _iGradeDao.UpdateGroupByGroupId(seminarGroupId, grade);
             }
             catch
             {
                 throw;
             }
-        }
-
-        public void UpdateGroupByGroupId(long seminarGroupId, int grade)
-        {
-            throw new NotImplementedException();
         }
 
     }
