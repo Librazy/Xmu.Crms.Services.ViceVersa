@@ -11,8 +11,8 @@ namespace Xmu.Crms.Services.ViceVersa
     class ClassService : IClassService
     {
         //private readonly ISeminarService _seminarService;
-        //private readonly ICourseService _courseService;
-        private readonly IUserService _userService;
+        // private readonly IUserService _userService;
+        private readonly IFixGroupService _fixGroupService;
 
         private readonly IClassDao _classDao;
         public  ClassService(IClassDao classDao)
@@ -22,13 +22,12 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
 
-        /// 按班级id删除班级.
+        /// 按班级id删除班级.(包括学生选课表)
         public void DeleteClassByClassId(long classId)
         {
                 try
                 {
-                DeleteClassSelectionByClassId(classId);
-                //_classDao.Delete(classId);
+                _classDao.Delete(classId);
                     
                 }
                 catch (ClassNotFoundException ec)
@@ -45,18 +44,19 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-               // _courseService.GetCourseByCourseId(courseId);
+                //根据课程id获得所有班级信息
                 List<ClassInfo> deleteClasses = _classDao.QueryAll(courseId);
                 foreach (ClassInfo c in deleteClasses)
                 {
-                    _classDao.DeleteSelection(0, c.Id);
+                    _fixGroupService.DeleteFixGroupByClassId(c.Id);
+                   // 根据class信息删除courseSelection表的记录 并删除班级
                     _classDao.Delete(c.Id);
                 }
             }catch(CourseNotFoundException e) { throw e; }
         }
 
 
-        /// 按classId删除CourseSelection表的记录.
+        /// 按classId删除CourseSelection表的一条记录.  ？？和取消选课的区别
         public void DeleteClassSelectionByClassId(long classId)
         {
             _classDao.DeleteSelection(0, classId);
@@ -98,7 +98,13 @@ namespace Xmu.Crms.Services.ViceVersa
         /// 老师获取该班级签到、分组状态.
         public Location GetCallStatusById(long seminarId, long classId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //_seminarService.GetSeminarBySeminarId(seminarId);
+                //_classDao.Get(classId);
+                return _classDao.GetLocation(seminarId, classId);
+            }
+            catch (SeminarNotFoundException e) { throw e; }
         }
 
 
@@ -107,7 +113,7 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-                var classinfo = _classDao.Get(classId);
+                ClassInfo classinfo = _classDao.Get(classId);
 
                 return classinfo;
             }
@@ -120,9 +126,7 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-                ClassInfo classinfo = _classDao.Get(classId);
-               
-                return classinfo;
+                return _classDao.Get(classId);
             }
             catch (ClassNotFoundException e) { throw e; }
         }
@@ -133,8 +137,7 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-                //_userService.GetUserByUserId(userId);
-                //classInfo.Course = _courseService.GetCourseByCourseId(courseId);
+                //检查数据是否合法
                 if (classInfo.ReportPercentage < 0 || classInfo.ReportPercentage > 100 ||
                    classInfo.PresentationPercentage < 0 || classInfo.PresentationPercentage > 100 ||
                    classInfo.ReportPercentage + classInfo.PresentationPercentage != 100 ||
@@ -145,7 +148,7 @@ namespace Xmu.Crms.Services.ViceVersa
                     throw new InvalidOperationException();
                 return _classDao.Save(classInfo);    //返回classid
 
-            }catch(UserNotFoundException eu) { throw eu; }
+            }
             catch(CourseNotFoundException ec) { throw ec; }
         }
 
@@ -182,7 +185,7 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
 
-        /// 新增评分规则.  返回班级id？
+        /// 新增评分规则.  返回班级id
         public long InsertScoreRule(long classId, ClassInfo proportions)
         {
             try
@@ -210,10 +213,10 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-                //_courseService.GetCourseByCourseId(courseId);
                 List<ClassInfo> list = _classDao.QueryAll(courseId);
                 return list;
             }
+            catch(CourseNotFoundException e) { throw e; }
             catch(ClassNotFoundException e) { throw e; }
         }
 
@@ -223,58 +226,50 @@ namespace Xmu.Crms.Services.ViceVersa
         // 按课程名称和教师名称获取班级列表.
         public IList<ClassInfo> ListClassByName(string courseName, string teacherName)
         {
-            try
-            {
-                List<ClassInfo> classList = new List<ClassInfo>();
-                if (courseName != null)
-                {
-                    // List<Course> courseList = _courseService.ListCourseByCourseName(courseName);
-                    
-                    
-                    //测试数据
-                    List<Course> courseList = new List<Course>
-                     {
-                    new Course { Id = 1},
-                  };
+            //try
+            //{
+            //    long userId = 1;   //jwt？？？？？
+            //    List<ClassInfo> classList = new List<ClassInfo>();
+            //    if (teacherName == null)//根据课程名称查
+            //    {
+            //        IList<ClassInfo> courseClassList = _courseService.ListClassByCourseName (courseName);
+            //        classList.AddRange(courseClassList);
+            //    }
+            //    else if (courseName == null)//根据教师姓名查
+            //    {
+            //        IList<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
+            //        classList.AddRange(teacherClassList);
+            //    }
+            //    else  //联合查找
+            //    {
+            //        IList<ClassInfo> courseClassList = _courseService.ListClassByCourseName(courseName);
+            //        IList<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
+            //        foreach (ClassInfo cc in courseClassList)
+            //            foreach (ClassInfo ct in teacherClassList)
+            //                if (cc.Id == ct.Id) { classList.Add(cc); break; }
+            //    }
 
+            //    //该学生已选班级列表
+            //    List<ClassInfo> studentClass = _classDao.ListClassByUserId(userId);
+            //    foreach (ClassInfo c in classList)
+            //        foreach (ClassInfo cs in studentClass)
+            //            if (c.Id == cs.Id) classList.Remove(c);//学生已选的就不列出
 
-                    List<ClassInfo> templist = null;
-                    if (courseList == null) return null;
-                    foreach (Course c in courseList)
-                    {
-                        templist = _classDao.QueryAll(c.Id);
-                        classList.AddRange(templist);
-                    }
-                }
-                else if (teacherName != null)
-                {
-                    //long userId = 1;   //jwt？？？？？
+            //    return classList;
 
-                    //List<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
-                    //List<ClassInfo> studentClassList = _courseService.ListClassByUserId(userId);
-                    //foreach (ClassInfo ct in teacherClassList)
-                    //{
-                    //    foreach (ClassInfo cs in studentClassList)
-                    //        if (ct.Id == cs.Id) break;
-                    //    classList.Add(ct);
-                    //}
-
-                }
-                return classList;
-
-            }catch(CourseNotFoundException ec) { throw ec; }
-            catch(UserNotFoundException eu) { throw eu; }
+            //}catch(CourseNotFoundException ec) { throw ec; }
+            //catch(UserNotFoundException eu) { throw eu; }
+            return null;
         }
 
 
-        /// 按班级id和班级修改班级信息.
         public void UpdateClassByClassId(long classId, ClassInfo newclass)
         {
-            //try
-            //{
-            //    var result = _classDao.Update(proportions);
-            //}
-            //catch (ClassNotFoundException e) { throw; }
+            try
+            {
+                var result = _classDao.Update(newclass);  //return 0成功更新
+            }
+            catch (ClassNotFoundException e) { throw e; }
         }
 
 

@@ -13,6 +13,7 @@ namespace Xmu.Crms.Services.ViceVersa
         List<ClassInfo> QueryAll(long id);
         ClassInfo Get(long id);
         int GetSelection(long userId,long classId);
+        Location GetLocation(long seminarId, long classId);
         /**
          * 根据学生ID获取班级列表.  
          * @author YeXiaona
