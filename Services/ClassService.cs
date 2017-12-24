@@ -11,15 +11,13 @@ namespace Xmu.Crms.Services.ViceVersa
     class ClassService : IClassService
     {
         //private readonly ISeminarService _seminarService;
-        private readonly ICourseService _courseService;
-       // private readonly IUserService _userService;
+        // private readonly IUserService _userService;
 
         private readonly IClassDao _classDao;
-        public  ClassService(IClassDao classDao,ICourseService courseService)
+        public  ClassService(IClassDao classDao)
         {
             _classDao = classDao;
             //_seminarService = seminarService;
-            _courseService = courseService;
         }
 
 
@@ -230,39 +228,40 @@ namespace Xmu.Crms.Services.ViceVersa
         // 按课程名称和教师名称获取班级列表.
         public IList<ClassInfo> ListClassByName(string courseName, string teacherName)
         {
-            try
-            {
-                long userId = 1;   //jwt？？？？？
-                List<ClassInfo> classList = new List<ClassInfo>();
-                if (teacherName == null)//根据课程名称查
-                {
-                    IList<ClassInfo> courseClassList = _courseService.ListClassByCourseName (courseName);
-                    classList.AddRange(courseClassList);
-                }
-                else if (courseName == null)//根据教师姓名查
-                {
-                    IList<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
-                    classList.AddRange(teacherClassList);
-                }
-                else  //联合查找
-                {
-                    IList<ClassInfo> courseClassList = _courseService.ListClassByCourseName(courseName);
-                    IList<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
-                    foreach (ClassInfo cc in courseClassList)
-                        foreach (ClassInfo ct in teacherClassList)
-                            if (cc.Id == ct.Id) { classList.Add(cc); break; }
-                }
+            //try
+            //{
+            //    long userId = 1;   //jwt？？？？？
+            //    List<ClassInfo> classList = new List<ClassInfo>();
+            //    if (teacherName == null)//根据课程名称查
+            //    {
+            //        IList<ClassInfo> courseClassList = _courseService.ListClassByCourseName (courseName);
+            //        classList.AddRange(courseClassList);
+            //    }
+            //    else if (courseName == null)//根据教师姓名查
+            //    {
+            //        IList<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
+            //        classList.AddRange(teacherClassList);
+            //    }
+            //    else  //联合查找
+            //    {
+            //        IList<ClassInfo> courseClassList = _courseService.ListClassByCourseName(courseName);
+            //        IList<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
+            //        foreach (ClassInfo cc in courseClassList)
+            //            foreach (ClassInfo ct in teacherClassList)
+            //                if (cc.Id == ct.Id) { classList.Add(cc); break; }
+            //    }
 
-                //该学生已选班级列表
-                List<ClassInfo> studentClass = _classDao.ListClassByUserId(userId);
-                foreach (ClassInfo c in classList)
-                    foreach (ClassInfo cs in studentClass)
-                        if (c.Id == cs.Id) classList.Remove(c);//学生已选的就不列出
+            //    //该学生已选班级列表
+            //    List<ClassInfo> studentClass = _classDao.ListClassByUserId(userId);
+            //    foreach (ClassInfo c in classList)
+            //        foreach (ClassInfo cs in studentClass)
+            //            if (c.Id == cs.Id) classList.Remove(c);//学生已选的就不列出
 
-                return classList;
+            //    return classList;
 
-            }catch(CourseNotFoundException ec) { throw ec; }
-            catch(UserNotFoundException eu) { throw eu; }
+            //}catch(CourseNotFoundException ec) { throw ec; }
+            //catch(UserNotFoundException eu) { throw eu; }
+            return null;
         }
 
 
