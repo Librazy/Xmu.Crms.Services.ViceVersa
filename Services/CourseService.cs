@@ -28,6 +28,8 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         {
             try
             {
+                if (courseId < 0)
+                    throw new ArgumentException();
                 //删除course下的class
                 _iClassService.DeleteClassByCourseId(courseId);
                 //删除course下的seminar
@@ -45,6 +47,8 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         {
             try
             {
+                if (courseId < 0)
+                    throw new ArgumentException();
                 Course course = _iCourseDao.GetCourseByCourseId(courseId);
                 //没查到该门课
                 if (course == null)
@@ -63,6 +67,8 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         {
             try
             {
+                if (userId < 0)
+                    throw new ArgumentException();
                 //根据userId找出teacher
                 //UserInfo teacher = _iUserService.GetUserByUserId(userId);  //会抛出ArgumentException和UserNotFoundException
                 //course.Teacher = teacher;
@@ -113,6 +119,8 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         {
             try
             {
+                if (userId < 0)
+                    throw new ArgumentException();
                 List<ClassInfo> classList = null;// _iCourseDao.ListClassByUserId(userId);
                 //没有查到
                 if (classList == null || classList.Count == 0)
@@ -145,6 +153,8 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         {
             try
             {
+                if (userId < 0)
+                    throw new ArgumentException();
                 List<Course> courseList = _iCourseDao.ListCourseByUserId(userId);
                 //查不到课程
                 if (courseList==null || courseList.Count==0)
@@ -158,9 +168,11 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         }
 
         public void UpdateCourseByCourseId(long courseId, Course course)
-        {//Transaction???
+        {
             try
             {
+                if (courseId < 0)
+                    throw new ArgumentException();
                 _iCourseDao.UpdateCourseByCourseId(courseId, course);
             }catch
             {
