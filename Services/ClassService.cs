@@ -10,9 +10,9 @@ namespace Xmu.Crms.Services.ViceVersa
 {
     class ClassService : IClassService
     {
-        //private readonly ISeminarService _seminarService;
+        private readonly ISeminarService _seminarService;
         // private readonly IUserService _userService;
-        //private readonly IFixGroupService _fixGroupService;
+        private readonly IFixGroupService _fixGroupService;
 
         private readonly IClassDao _classDao;
         public  ClassService(IClassDao classDao)
@@ -48,7 +48,7 @@ namespace Xmu.Crms.Services.ViceVersa
                 List<ClassInfo> deleteClasses = _classDao.QueryAll(courseId);
                 foreach (ClassInfo c in deleteClasses)
                 {
-                    //_fixGroupService.DeleteFixGroupByClassId(c.Id);
+                    _fixGroupService.DeleteFixGroupByClassId(c.Id);
                    // 根据class信息删除courseSelection表的记录 并删除班级
                     _classDao.Delete(c.Id);
                 }
@@ -100,7 +100,7 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-                //_seminarService.GetSeminarBySeminarId(seminarId);
+                _seminarService.GetSeminarBySeminarId(seminarId);
                 //_classDao.Get(classId);
                 return _classDao.GetLocation(seminarId, classId);
             }
@@ -211,14 +211,14 @@ namespace Xmu.Crms.Services.ViceVersa
         /// 根据课程ID获得班级列表.
         public IList<ClassInfo> ListClassByCourseId(long courseId)
         {
-           return listClassByUserId(21);
-            //try
-            //{
-            //    List<ClassInfo> list = _classDao.QueryAll(courseId);
-            //    return list;
-            //}
-            //catch(CourseNotFoundException e) { throw e; }
-            //catch(ClassNotFoundException e) { throw e; }
+
+            try
+            {
+                List<ClassInfo> list = _classDao.QueryAll(courseId);
+                return list;
+            }
+            catch (CourseNotFoundException e) { throw e; }
+            catch (ClassNotFoundException e) { throw e; }
         }
 
 
@@ -296,7 +296,7 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
         //根据学生ID获取班级列表.
-        public List<ClassInfo> listClassByUserId(long userId)
+        public List<ClassInfo> ListClassByUserId(long userId)
         {
             try
             {
@@ -306,11 +306,11 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
         //老师发起签到.
-        public long callInRollById(Location location)
+        public long CallInRollById(Location location)
         {
             try
             {
-                //location.Seminar = _seminarService.GetSeminarBySeminarId(location.Seminar.Id);
+                location.Seminar = _seminarService.GetSeminarBySeminarId(location.Seminar.Id);
                 location.ClassInfo = GetClassByClassId(location.ClassInfo.Id);
                 location.Status = 1;
                 return _classDao.InsertLocation(location);
@@ -321,11 +321,11 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
         //老师结束签到.
-        public void endCallRollById(Location location)
+        public void EndCallRollById(Location location)
         {
             try
             {
-                //_seminarService.GetSeminarBySeminarId(location.Seminar.Id);
+                _seminarService.GetSeminarBySeminarId(location.Seminar.Id);
                  GetClassByClassId(location.ClassInfo.Id);
                 
                  _classDao.UpdateLocation(location);

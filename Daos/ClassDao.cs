@@ -231,7 +231,7 @@ namespace Xmu.Crms.Services.ViceVersa
             {
                 try
                 {
-                    Location location= _db.Location.Include(u=>u.Seminar).Include(u=>u.ClassInfo).SingleOrDefault<Location>();
+                    Location location= _db.Location.Include(u=>u.Seminar).Include(u=>u.ClassInfo).SingleOrDefault<Location>(u=>u.Id==t.Id);
                     //没有记录
                     if (location == null) throw new ClassNotFoundException();
 
