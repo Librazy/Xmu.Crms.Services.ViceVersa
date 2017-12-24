@@ -22,11 +22,20 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         {
             try
             {
-                StudentScoreGroup ssg = new StudentScoreGroup { Id = topicId };
-                //将实体附加到对象管理器中
-                _db.StudentScoreGroup.Attach(ssg);
-                //删除
-                _db.StudentScoreGroup.Remove(ssg);
+                //查找到所有的seminarGroupTopic
+                //查找到所有的studentScoreGroup//.AsNoTracking()
+                List<SeminarGroupTopic> seminarGroupTopicList = _db.SeminarGroupTopic.Include(u => u.Topic).Where(u => u.Topic.Id == topicId).ToList();
+                foreach (var seminarGroupTopic in seminarGroupTopicList)
+                {
+                    List<StudentScoreGroup> studentScoreGroupList = _db.StudentScoreGroup.Include(u => u.SeminarGroupTopic).Where(u => u.SeminarGroupTopic.Id == seminarGroupTopic.Id).ToList();
+                    foreach (var studentScoreGroup in studentScoreGroupList)
+                    {
+                        //将实体附加到对象管理器中
+                        _db.StudentScoreGroup.Attach(studentScoreGroup);
+                        //删除
+                        _db.StudentScoreGroup.Remove(studentScoreGroup);
+                    }
+                }
                 _db.SaveChanges();
             }
             catch
@@ -154,10 +163,10 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                         //List<StudentScoreGroup> studentScoreList = new List<StudentScoreGroup>();
                         //获取学生打分列表
                         var studentScoreList = _db.StudentScoreGroup.Where(u => u.SeminarGroupTopic.Id == i.Id).ToList();
-                        double grade = 0; int k = 0;
+                        int? grade = 0; int k = 0;
                         foreach (var g in studentScoreList)
                         {
-                            //grade += g.Grade;
+                            grade += g.Grade;
                             k++;
                         }
                         double avg = (double)grade / k;
@@ -165,9 +174,10 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                         //将小组该讨论课平均分和Id保存
                         idList[groupNumber] = i.Id;
                         gradeList[groupNumber] = avg;
+                        groupNumber++;
                     }
                     //将小组成绩从大到小排序
-                    QuickSort(idList, gradeList, 0, groupNumber);
+                    QuickSort(idList, gradeList, 0, groupNumber-1);
 
                     Seminar seminar;
                     ClassInfo classInfo;
@@ -259,16 +269,33 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
             //根据seminarGroupList中元素，依次计算
             //SeminarGroup实体中保存了ClassInfo实体对象，可以查到成绩计算方法
             double[] tempTotalGrade = new double[seminarGroupList.Count];
+            long[] tempId = new long[seminarGroupList.Count];
+            foreach(var seminarGroup in seminarGroupList)
+            {
+                //根据seminarGroupId获得seminarGroupTopicList,计算每一个seminarGroup的展示分数
+                List<SeminarGroupTopic> seminarGroupTopicList = _db.SeminarGroupTopic.Include(u => u.SeminarGroup).Where(u => u.SeminarGroup.Id == seminarGroup.Id).ToList();
+                int? grade = 0;
+                int number = 0;
+                foreach (var seminarGroupTopic in seminarGroupTopicList)
+                {
+                    grade += seminarGroupTopic.PresentationGrade;
+                    number++;
+                }
+                //更新seminarGroup中的展示成绩
+                int? avgPreGrade = grade / number;
+                _db.SeminarGroup.Attach(seminarGroup);
+                seminarGroup.PresentationGrade= avgPreGrade;
+                _db.SaveChanges();
+            }
             for (int i = 0; i < seminarGroupList.Count; i++)
             {
                 tempTotalGrade[i] = ((double)(seminarGroupList[i].ClassInfo.PresentationPercentage * seminarGroupList[i].PresentationGrade 
                     + seminarGroupList[i].ClassInfo.ReportPercentage * seminarGroupList[i].ReportGrade)) / 100;
+                tempId[i] = seminarGroupList[i].Id;
             }
-
             //排序
             //将小组总成绩从大到小排序
-            Array.Sort(tempTotalGrade);
-
+            QuickSort(tempId,tempTotalGrade,0,seminarGroupList.Count-1);
             //根据排序和比例计算组数
             int A = Convert.ToInt32(seminarGroupList.Count * seminarGroupList[0].ClassInfo.FivePointPercentage * 0.01);
             int B = Convert.ToInt32(seminarGroupList.Count * seminarGroupList[0].ClassInfo.FourPointPercentage * 0.01);
