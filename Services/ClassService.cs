@@ -11,7 +11,7 @@ namespace Xmu.Crms.Services.ViceVersa
     class ClassService : IClassService
     {
         private readonly ISeminarService _seminarService;
-        // private readonly IUserService _userService;
+        private readonly IUserService _userService;
         private readonly IFixGroupService _fixGroupService;
 
         private readonly IClassDao _classDao;
@@ -133,7 +133,7 @@ namespace Xmu.Crms.Services.ViceVersa
 
 
         /// 新建班级.
-        public long InsertClassById(long userId, long courseId, ClassInfo classInfo)
+        public long InsertClassById(long courseId, ClassInfo classInfo)
         {
             try
             {
@@ -153,12 +153,11 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
 
-        /// 学生按班级id选择班级.
-        public string InsertCourseSelectionById(long userId, long classId)
+        /// 学生按班级id选择班级.成功返回选课记录id 失败返回0
+        public long InsertCourseSelectionById(long userId, long classId)
         {
             try
             {
-                var url =" 1";    //？？？？
                 //_userService.GetUserByUserId(userId);
                 ClassInfo classinfo= GetClassByClassId(classId);
 
@@ -167,17 +166,15 @@ namespace Xmu.Crms.Services.ViceVersa
                 foreach(ClassInfo c in classList)
                 {
                     if (_classDao.GetSelection(userId, c.Id) != 0)//学生已选同课程下其他班级
-                        return url;//？？？
+                        return 0;
                 }
                CourseSelection coursesele = new CourseSelection();
 
-                //测试数据
-                 UserInfo student = new UserInfo() { Id = 91,Password="123" ,Phone="123"};
-                //UserInfo student = _userService.GetUserByUserId(userId);
+                
+                UserInfo student = _userService.GetUserByUserId(userId);
                 coursesele.Student = student;
                 coursesele.ClassInfo = classinfo;
-                _classDao.InsertSelection(coursesele);
-                return url;
+                return _classDao.InsertSelection(coursesele);
             }
             catch (UserNotFoundException eu) { throw eu; }
             catch(ClassNotFoundException ec) { throw ec; }
@@ -211,7 +208,6 @@ namespace Xmu.Crms.Services.ViceVersa
         /// 根据课程ID获得班级列表.
         public IList<ClassInfo> ListClassByCourseId(long courseId)
         {
-
             try
             {
                 List<ClassInfo> list = _classDao.QueryAll(courseId);
