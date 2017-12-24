@@ -12,6 +12,7 @@ namespace Xmu.Crms.Services.ViceVersa
     {
         //private readonly ISeminarService _seminarService;
         // private readonly IUserService _userService;
+        private readonly IFixGroupService _fixGroupService;
 
         private readonly IClassDao _classDao;
         public  ClassService(IClassDao classDao)
@@ -21,13 +22,12 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
 
-        /// 按班级id删除班级.
+        /// 按班级id删除班级.(包括学生选课表)
         public void DeleteClassByClassId(long classId)
         {
                 try
                 {
-                DeleteClassSelectionByClassId(classId);
-                //_classDao.Delete(classId);
+                _classDao.Delete(classId);
                     
                 }
                 catch (ClassNotFoundException ec)
@@ -48,6 +48,7 @@ namespace Xmu.Crms.Services.ViceVersa
                 List<ClassInfo> deleteClasses = _classDao.QueryAll(courseId);
                 foreach (ClassInfo c in deleteClasses)
                 {
+                    _fixGroupService.DeleteFixGroupByClassId(c.Id);
                    // 根据class信息删除courseSelection表的记录 并删除班级
                     _classDao.Delete(c.Id);
                 }
@@ -55,7 +56,7 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
 
-        /// 按classId删除CourseSelection表的记录.
+        /// 按classId删除CourseSelection表的一条记录.  ？？和取消选课的区别
         public void DeleteClassSelectionByClassId(long classId)
         {
             _classDao.DeleteSelection(0, classId);
@@ -112,7 +113,7 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-                var classinfo = _classDao.Get(classId);
+                ClassInfo classinfo = _classDao.Get(classId);
 
                 return classinfo;
             }
@@ -125,9 +126,7 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-                ClassInfo classinfo = _classDao.Get(classId);
-               
-                return classinfo;
+                return _classDao.Get(classId);
             }
             catch (ClassNotFoundException e) { throw e; }
         }
@@ -138,8 +137,7 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-                //_userService.GetUserByUserId(userId);
-                //classInfo.Course = _courseService.GetCourseByCourseId(courseId);
+                //检查数据是否合法
                 if (classInfo.ReportPercentage < 0 || classInfo.ReportPercentage > 100 ||
                    classInfo.PresentationPercentage < 0 || classInfo.PresentationPercentage > 100 ||
                    classInfo.ReportPercentage + classInfo.PresentationPercentage != 100 ||
@@ -150,7 +148,7 @@ namespace Xmu.Crms.Services.ViceVersa
                     throw new InvalidOperationException();
                 return _classDao.Save(classInfo);    //返回classid
 
-            }catch(UserNotFoundException eu) { throw eu; }
+            }
             catch(CourseNotFoundException ec) { throw ec; }
         }
 
@@ -187,7 +185,7 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
 
-        /// 新增评分规则.  返回班级id？
+        /// 新增评分规则.  返回班级id
         public long InsertScoreRule(long classId, ClassInfo proportions)
         {
             try
@@ -215,10 +213,10 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-                //_courseService.GetCourseByCourseId(courseId);
                 List<ClassInfo> list = _classDao.QueryAll(courseId);
                 return list;
             }
+            catch(CourseNotFoundException e) { throw e; }
             catch(ClassNotFoundException e) { throw e; }
         }
 
@@ -269,7 +267,7 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-                var result = _classDao.Update(newclass);  
+                var result = _classDao.Update(newclass);  //return 0成功更新
             }
             catch (ClassNotFoundException e) { throw e; }
         }

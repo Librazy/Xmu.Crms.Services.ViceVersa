@@ -18,7 +18,7 @@ namespace Xmu.Crms.Services.ViceVersa
             _db = db;
         }
 
-        //删除班级
+        //删除班级和学生选课表
         public void Delete(long id)
         {
             using (var scope = _db.Database.BeginTransaction())
@@ -27,6 +27,7 @@ namespace Xmu.Crms.Services.ViceVersa
                 {
                     ClassInfo c = _db.ClassInfo.Where(u => u.Id == id).SingleOrDefault<ClassInfo>();
                     if (c == null) throw new ClassNotFoundException();
+
                     //根据class信息删除courseSelection表
                     DeleteSelection(0, c.Id);
 
@@ -56,8 +57,11 @@ namespace Xmu.Crms.Services.ViceVersa
         //根据课程id列出所有班级
         public List<ClassInfo> QueryAll(long id)
         {
+            //找到这门课
             Course course= _db.Course.SingleOrDefault(u => u.Id == id);
             if (course == null) { throw new CourseNotFoundException(); }
+
+
             List<ClassInfo> list = _db.ClassInfo.Include(u => u.Course).Where(u => u.Course.Id == id).ToList<ClassInfo>();
             if (list == null)
             {
@@ -157,7 +161,6 @@ namespace Xmu.Crms.Services.ViceVersa
                 {
                     try
                     {
-
                         CourseSelection c = _db.CourseSelection.SingleOrDefault<CourseSelection>(u => u.Student.Id == userId && u.ClassInfo.Id == classId);
 
                         _db.CourseSelection.Attach(c);
