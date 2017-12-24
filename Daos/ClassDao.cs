@@ -21,21 +21,23 @@ namespace Xmu.Crms.Services.ViceVersa
         //删除班级
         public void Delete(long id)
         {
-            //using (var scope = _db.Database.BeginTransaction())
-            //{
-                //try
-                //{
+            using (var scope = _db.Database.BeginTransaction())
+            {
+                try
+                {
                     ClassInfo c = _db.ClassInfo.Where(u => u.Id == id).SingleOrDefault<ClassInfo>();
                     if (c == null) throw new ClassNotFoundException();
-                     
+                    //根据class信息删除courseSelection表
+                    DeleteSelection(0, c.Id);
+
                     _db.ClassInfo.Attach(c);
                     _db.ClassInfo.Remove(c);
                     _db.SaveChanges();
-            //        scope.Commit();
-            //    }
-            //    catch (ClassNotFoundException e) { scope.Rollback(); throw e; }
+                    scope.Commit();
+                }
+                catch (ClassNotFoundException e) { scope.Rollback(); throw e; }
 
-            //}
+            }
         }
 
         public ClassInfo Get(long id)
@@ -54,7 +56,8 @@ namespace Xmu.Crms.Services.ViceVersa
         //根据课程id列出所有班级
         public List<ClassInfo> QueryAll(long id)
         {
-            
+            Course course= _db.Course.SingleOrDefault(u => u.Id == id);
+            if (course == null) { throw new CourseNotFoundException(); }
             List<ClassInfo> list = _db.ClassInfo.Include(u => u.Course).Where(u => u.Course.Id == id).ToList<ClassInfo>();
             if (list == null)
             {
@@ -145,14 +148,14 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
 
-        //根据班级id学生id删除学生选课表
+        //根据班级id/学生id删除学生选课表
         public void DeleteSelection(long userId, long classId)
         {
-            using (var scope = _db.Database.BeginTransaction())
+            if (userId != 0)//单个学生取消选课
             {
-                try
+                using (var scope = _db.Database.BeginTransaction())
                 {
-                    if (userId != 0)//单个学生取消选课
+                    try
                     {
 
                         CourseSelection c = _db.CourseSelection.SingleOrDefault<CourseSelection>(u => u.Student.Id == userId && u.ClassInfo.Id == classId);
@@ -160,20 +163,21 @@ namespace Xmu.Crms.Services.ViceVersa
                         _db.CourseSelection.Attach(c);
                         _db.CourseSelection.Remove(c);
                         _db.SaveChanges();
+                        scope.Commit();
                     }
-                    else  //删除班级时 批量删除
-                    {
-                        List<CourseSelection> t1 = _db.CourseSelection.Where(t => t.ClassInfo.Id == classId).ToList<CourseSelection>();
-                        foreach (CourseSelection t in t1)
-                        {
-                            _db.CourseSelection.Remove(t);
-                        }
-                        Delete(classId);//删除班级
-                        _db.SaveChanges();
-                    }
-                    scope.Commit();
+                    catch { scope.Rollback(); }
                 }
-                catch { scope.Rollback(); }
+            }
+
+            else  //删除班级时 批量删除
+            {
+                List<CourseSelection> t1 = _db.CourseSelection.Where(t => t.ClassInfo.Id == classId).ToList<CourseSelection>();
+                foreach (CourseSelection t in t1)
+                {
+                    _db.CourseSelection.Remove(t);
+                }
+                
+                _db.SaveChanges();
             }
         }
 

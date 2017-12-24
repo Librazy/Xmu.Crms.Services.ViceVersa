@@ -44,11 +44,11 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
-               // _courseService.GetCourseByCourseId(courseId);
+                //根据课程id获得所有班级信息
                 List<ClassInfo> deleteClasses = _classDao.QueryAll(courseId);
                 foreach (ClassInfo c in deleteClasses)
                 {
-                    _classDao.DeleteSelection(0, c.Id);
+                   // 根据class信息删除courseSelection表的记录 并删除班级
                     _classDao.Delete(c.Id);
                 }
             }catch(CourseNotFoundException e) { throw e; }
