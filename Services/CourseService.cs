@@ -16,7 +16,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         private readonly IClassService _iClassService;
         //private readonly IUserService _iUserService;
 
-        public CourseService(ICourseDao iCourseDao,IClassService iClassService)
+        public CourseService(ICourseDao iCourseDao,IClassService iClassService/*,ISeminarService iSeminarService,IUserService iUserService*/)
         {
             _iCourseDao = iCourseDao;
             //_iSeminarService = iSeminarService;
@@ -42,7 +42,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
             catch
             {
-                throw;
+                
             }
         }
 
