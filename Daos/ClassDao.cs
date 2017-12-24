@@ -54,7 +54,7 @@ namespace Xmu.Crms.Services.ViceVersa
         //根据课程id列出所有班级
         public List<ClassInfo> QueryAll(long id)
         {
-
+            
             List<ClassInfo> list = _db.ClassInfo.Include(u => u.Course).Where(u => u.Course.Id == id).ToList<ClassInfo>();
             if (list == null)
             {
@@ -102,6 +102,16 @@ namespace Xmu.Crms.Services.ViceVersa
                 catch { scope.Rollback(); throw; }
             }
 
+        }
+
+        //查询学生选课表的记录
+        public int GetSelection(long userId, long classId)
+        {
+           
+
+            CourseSelection courseSelection= _db.CourseSelection.Where(u=>u.ClassInfo.Id==classId&&u.Student.Id==userId).SingleOrDefault<CourseSelection>();
+            if (courseSelection != null) return 1;//找到记录
+            return 0;
         }
 
         public int Update(ClassInfo t)

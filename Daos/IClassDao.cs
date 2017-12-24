@@ -12,6 +12,7 @@ namespace Xmu.Crms.Services.ViceVersa
         int Update(ClassInfo t);
         List<ClassInfo> QueryAll(long id);
         ClassInfo Get(long id);
+        int GetSelection(long userId,long classId);
         /**
          * 根据学生ID获取班级列表.  
          * @author YeXiaona
