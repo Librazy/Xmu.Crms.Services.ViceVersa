@@ -83,8 +83,8 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         /// 条件: 讨论课已结束，展示得分已算出  *GradeService
         /// </summary>
         /// <param name="seminarId">讨论课id</param>
-        /// <param name="seminarGroupId">讨论课组id</param>
+        /// <param name="seminarGroupList">讨论课小组列表</param>
         /// <exception cref="T:System.ArgumentException">id格式错误</exception>
-        void CountGroupGradeBySerminarId(long seminarId, long seminarGroupId);
+        void CountGroupGradeBySerminarId(long seminarId, IList<SeminarGroup> seminarGroupList);
     }
 }

@@ -117,7 +117,17 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 
         public void CountGroupGradeBySerminarId(long seminarId, long seminarGroupId)
         {
-            _iGradeDao.CountGroupGradeBySerminarId(seminarId,seminarGroupId);
+            try
+            {
+                //调用SeminarGroupService中的ListSeminarGroupBySeminarId 方法
+                IList<SeminarGroup> seminarGroupList = _iSeminarGroupService.ListSeminarGroupBySeminarId(seminarId);
+
+                _iGradeDao.CountGroupGradeBySerminarId(seminarId, seminarGroupList);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public void CountPresentationGrade(long seminarId, long seminarGroupId)

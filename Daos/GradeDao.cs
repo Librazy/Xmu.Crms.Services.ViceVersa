@@ -254,10 +254,69 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
             //通过seminarGrouptopicId获得List<StudentScoreGroup>
         }
 
-        //只需要讨论课ID，同上
-        public void CountGroupGradeBySerminarId(long seminarId, long seminarGroupId)
+        public void CountGroupGradeBySerminarId(long seminarId, IList<SeminarGroup> seminarGroupList)
         {
+            //根据seminarGroupList中元素，依次计算
+            //SeminarGroup实体中保存了ClassInfo实体对象，可以查到成绩计算方法
+            double[] tempTotalGrade = new double[seminarGroupList.Count];
+            for (int i = 0; i < seminarGroupList.Count; i++)
+            {
+                tempTotalGrade[i] = ((double)(seminarGroupList[i].ClassInfo.PresentationPercentage * seminarGroupList[i].PresentationGrade 
+                    + seminarGroupList[i].ClassInfo.ReportPercentage * seminarGroupList[i].ReportGrade)) / 100;
+            }
 
+            //排序
+            //将小组总成绩从大到小排序
+            Array.Sort(tempTotalGrade);
+
+            //根据排序和比例计算组数
+            int A = Convert.ToInt32(seminarGroupList.Count * seminarGroupList[0].ClassInfo.FivePointPercentage * 0.01);
+            int B = Convert.ToInt32(seminarGroupList.Count * seminarGroupList[0].ClassInfo.FourPointPercentage * 0.01);
+            int C = Convert.ToInt32(seminarGroupList.Count * seminarGroupList[0].ClassInfo.ThreePointPercentage * 0.01);
+
+            //各小组按比例给分
+            for (int i = 0; i < C; i++)
+            {
+                try
+                {
+                    //更新报告分
+                    _db.SeminarGroup.Attach(seminarGroupList[i]);
+                    seminarGroupList[i].FinalGrade = 3;
+                    _db.SaveChanges();
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+            for (int i = C; i < B + C; i++)
+            {
+                try
+                {
+                    //更新报告分
+                    _db.SeminarGroup.Attach(seminarGroupList[i]);
+                    seminarGroupList[i].FinalGrade = 4;
+                    _db.SaveChanges();
+                }
+                catch
+                {
+                    throw;
+                }
+            }
+            for (int i = B + C; i < A + B + C; i++)
+            {
+                try
+                {
+                    //更新报告分
+                    _db.SeminarGroup.Attach(seminarGroupList[i]);
+                    seminarGroupList[i].FinalGrade = 5;
+                    _db.SaveChanges();
+                }
+                catch
+                {
+                    throw;
+                }
+            }
         }
     }
 }
