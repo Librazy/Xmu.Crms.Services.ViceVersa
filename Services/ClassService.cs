@@ -11,7 +11,7 @@ namespace Xmu.Crms.Services.ViceVersa
     class ClassService : IClassService
     {
         //private readonly ISeminarService _seminarService;
-        //private readonly ICourseService _courseService;
+        private readonly ICourseService _courseService;
        // private readonly IUserService _userService;
 
         private readonly IClassDao _classDao;
@@ -231,41 +231,33 @@ namespace Xmu.Crms.Services.ViceVersa
         {
             try
             {
+                long userId = 1;   //jwt？？？？？
                 List<ClassInfo> classList = new List<ClassInfo>();
-                if (courseName != null)
+                if (teacherName == null)//根据课程名称查
                 {
-                    // List<Course> courseList = _courseService.ListCourseByCourseName(courseName);
-                    
-                    
-                    //测试数据
-                    List<Course> courseList = new List<Course>
-                     {
-                    new Course { Id = 1},
-                  };
-
-
-                    List<ClassInfo> templist = null;
-                    if (courseList == null) return null;
-                    foreach (Course c in courseList)
-                    {
-                        templist = _classDao.QueryAll(c.Id);
-                        classList.AddRange(templist);
-                    }
+                    IList<ClassInfo> courseClassList = _courseService.ListClassByCourseName (courseName);
+                    classList.AddRange(courseClassList);
                 }
-                else if (teacherName != null)
+                else if (courseName == null)//根据教师姓名查
                 {
-                    //long userId = 1;   //jwt？？？？？
-
-                    //List<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
-                    //List<ClassInfo> studentClassList = _courseService.ListClassByUserId(userId);
-                    //foreach (ClassInfo ct in teacherClassList)
-                    //{
-                    //    foreach (ClassInfo cs in studentClassList)
-                    //        if (ct.Id == cs.Id) break;
-                    //    classList.Add(ct);
-                    //}
-
+                    IList<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
+                    classList.AddRange(teacherClassList);
                 }
+                else  //联合查找
+                {
+                    IList<ClassInfo> courseClassList = _courseService.ListClassByCourseName(courseName);
+                    IList<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
+                    foreach (ClassInfo cc in courseClassList)
+                        foreach (ClassInfo ct in teacherClassList)
+                            if (cc.Id == ct.Id) { classList.Add(cc); break; }
+                }
+
+                //该学生已选班级列表
+                List<ClassInfo> studentClass = _classDao.ListClassByUserId(userId);
+                foreach (ClassInfo c in classList)
+                    foreach (ClassInfo cs in studentClass)
+                        if (c.Id == cs.Id) classList.Remove(c);//学生已选的就不列出
+
                 return classList;
 
             }catch(CourseNotFoundException ec) { throw ec; }
@@ -273,14 +265,14 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
 
-        /// 按班级id和班级修改班级信息.
-        public void UpdateClassByClassId(long classId)
+        /// 按班级id和班级修改班级信息. name不能为空 其他为空则为清零的意思
+        public void UpdateClassByClassId(long classId, ClassInfo newclass)
         {
-            //try
-            //{
-            //    var result = _classDao.Update(proportions);
-            //}
-            //catch (ClassNotFoundException e) { throw; }
+            try
+            {
+                var result = _classDao.Update(newclass);  
+            }
+            catch (ClassNotFoundException e) { throw e; }
         }
 
 

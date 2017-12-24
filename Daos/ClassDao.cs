@@ -177,6 +177,7 @@ namespace Xmu.Crms.Services.ViceVersa
             }
         }
 
+        // 根据学生ID获取班级列表
         public List<ClassInfo> ListClassByUserId(long userId)
         {
             try
