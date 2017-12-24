@@ -43,9 +43,9 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             {
                 return _iGradeDao.GetSeminarGroupBySeminarGroupId(seminarGroupId);
             }
-            catch
+            catch(GroupNotFoundException e1)
             {
-                throw;
+                throw e1;
             }
         }
 
@@ -64,9 +64,13 @@ namespace Xmu.Crms.Services.ViceVersa.Services
                     seminarGroupList.Add(_iSeminarGroupService.GetSeminarGroupById(seminarList[0].Id, userId));
                 }
             }
-            catch
+            catch(CourseNotFoundException cre)
             {
-                throw;
+                throw cre;
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
             return seminarGroupList;
         }
@@ -77,16 +81,22 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             {
                 //调用TopicService中GetSeminarGroupTopicById(long topicId, long groupId)方法 
                 SeminarGroupTopic seminarGroupTopic = _iTopicService.GetSeminarGroupTopicById(topicId, groupId);
-
                 //调用UserService中的GetUserByUserId(long userId)方法
                 UserInfo userInfo = _iUserService.GetUserByUserId(userId);
-
                 //调用自己的dao
                 _iGradeDao.InsertGroupGradeByUserId(seminarGroupTopic, userInfo, grade);
             }
-            catch
+            catch(GroupNotFoundException gre)
             {
-                throw;
+                throw gre;
+            }
+            catch(UserNotFoundException ure)
+            {
+                throw ure;
+            }
+            catch(Exception e)
+            {
+                throw e;
             }
         }
 
@@ -96,9 +106,13 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             {
                 _iGradeDao.UpdateGroupByGroupId(seminarGroupId, grade);
             }
-            catch
+            catch (GroupNotFoundException gre)
             {
-                throw;
+                throw gre;
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 
@@ -108,19 +122,46 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             {
                 return _iSeminarGroupService.ListSeminarGroupIdByStudentId(userId);
             }
-            catch
+            catch (UserNotFoundException ure)
             {
-                throw;
+                throw ure;
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 
         public void CountPresentationGrade(long seminarId, long seminarGroupId)
         {
-            ////调用TopicService 的 IList<Topic> ListTopicBySeminarId(long seminarId)方法
-            IList<Topic> topicList = _iTopicService.ListTopicBySeminarId(seminarId);
-
-            //调用自己的dao分别对每个topic计算
-            _iGradeDao.CountPresentationGrade(seminarId, topicList);
+            try
+            {
+                //调用TopicService 的 IList<Topic> ListTopicBySeminarId(long seminarId)方法
+                IList<Topic> topicList = _iTopicService.ListTopicBySeminarId(seminarId);
+           
+                //调用自己的dao分别对每个topic计算
+                _iGradeDao.CountPresentationGrade(seminarId, topicList);
+            }
+            catch (TopicNotFoundException ure)
+            {
+                throw ure;
+            }
+            catch (GroupNotFoundException gre)
+            {
+                throw gre;
+            }
+            catch (SeminarNotFoundException sme)
+            {
+                throw sme;
+            }
+            catch(ClassNotFoundException cle)
+            {
+                throw cle;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public void CountGroupGradeBySerminarId(long seminarId, long seminarGroupId)
@@ -132,9 +173,17 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 
                 _iGradeDao.CountGroupGradeBySerminarId(seminarId, seminarGroupList);
             }
-            catch
+            catch (SeminarNotFoundException sme)
             {
-                throw;
+                throw sme;
+            }
+            catch (GroupNotFoundException gre)
+            {
+                throw gre;
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
     }
