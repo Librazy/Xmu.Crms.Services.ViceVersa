@@ -22,12 +22,13 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
         {
             try
             {
-                Course course = new Course { Id = courseId };
+                Course course = _db.Course.Where(c=>c.Id==courseId).SingleOrDefault();
+                if (course == null)
+                    throw new CourseNotFoundException();
                 //将实体附加到对象管理器中
                 _db.Course.Attach(course);
                 //删除
-                if (_db.Course.Remove(course) == null)
-                    throw new CourseNotFoundException();
+                _db.Course.Remove(course);
                 _db.SaveChanges();
             }
             catch

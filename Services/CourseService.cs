@@ -16,7 +16,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         private readonly IClassService _iClassService;
         //private readonly IUserService _iUserService;
 
-        public CourseService(ICourseDao iCourseDao,IClassService iClassService)
+        public CourseService(ICourseDao iCourseDao,IClassService iClassService/*,ISeminarService iSeminarService,IUserService iUserService*/)
         {
             _iCourseDao = iCourseDao;
             //_iSeminarService = iSeminarService;
@@ -28,17 +28,12 @@ namespace Xmu.Crms.Services.ViceVersa.Services
         {
             try
             {
-                //事务
-                using (var scope = new TransactionScope())
-                {
-                    //删除course下的class
-                    _iClassService.DeleteClassByCourseId(courseId);
-                    //删除course下的seminar
-                    //_iSeminarService.DeleteSeminarByCourseId(courseId);
-                    //删除course
-                    _iCourseDao.DeleteCourseByCourseId(courseId);
-                    scope.Complete();
-                }
+                //删除course下的class
+                _iClassService.DeleteClassByCourseId(courseId);
+                //删除course下的seminar
+                //_iSeminarService.DeleteSeminarByCourseId(courseId);
+                //删除course
+                _iCourseDao.DeleteCourseByCourseId(courseId);
             }
             catch
             {
@@ -137,8 +132,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
                 IList<Course> courseList = _iCourseDao.ListCourseByCourseName(courseName);
                 if (courseList == null || courseList.Count == 0)
                 {
-                    //throw new CourseNotFoundException();
-                    return null;
+                    throw new CourseNotFoundException();
                 }
                 return courseList;
             }catch

@@ -128,6 +128,5 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             //调用自己的dao分别对每个topic计算
             _iGradeDao.CountPresentationGrade(seminarId, topicList);
         }
-
     }
 }
