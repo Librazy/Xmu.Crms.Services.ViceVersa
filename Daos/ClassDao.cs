@@ -187,29 +187,63 @@ namespace Xmu.Crms.Services.ViceVersa
         // 根据学生ID获取班级列表
         public List<ClassInfo> ListClassByUserId(long userId)
         {
-            try
-            {
-                var selectionList = _db.CourseSelection.Include(c => c.Student).Include(c=>c.ClassInfo).Where(c => c.Student.Id == userId);
-                //找不到对应的选课信息
-                if (selectionList == null)
-                    return null;
+            List<CourseSelection> selectionList = _db.CourseSelection.Include(c => c.Student).Include(c => c.ClassInfo).Where(c => c.Student.Id == userId).ToList<CourseSelection>();
+            //找不到对应的选课信息
+            if (selectionList == null)
+                throw new ClassNotFoundException();
 
-                //根据classId获得对应的class
-                List<ClassInfo> classList = new List<ClassInfo>();
-                foreach (var i in selectionList)
-                    classList.Add(Get(i.ClassInfo.Id));
-                return classList;
-            }
-            catch
-            {
-                throw;
-            }
+            //根据classId获得对应的class
+            List<ClassInfo> classList = new List<ClassInfo>();
+            foreach (CourseSelection i in selectionList)
+                classList.Add(Get(i.ClassInfo.Id));
+            return classList;
         }
 
         // 老师获取该班级签到、分组状态.
         public Location GetLocation(long seminarId, long classId)
         {
             return _db.Location.Include(u=>u.ClassInfo).Include(u=>u.Seminar).SingleOrDefault<Location>(u => u.Seminar.Id == seminarId && u.ClassInfo.Id == classId);
+        }
+
+        //添加Location表返回id
+        public long InsertLocation(Location t)
+        {
+            using (var scope = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    _db.Location.Add(t);
+
+                    _db.SaveChanges();
+
+                    scope.Commit();
+                    return t.Id;
+                }
+                catch { scope.Rollback(); throw; }
+            }
+
+        }
+
+        //结束签到时修改location
+        public int UpdateLocation(Location t)
+        {
+            using (var scope = _db.Database.BeginTransaction())
+            {
+                try
+                {
+                    Location location= _db.Location.Include(u=>u.Seminar).Include(u=>u.ClassInfo).SingleOrDefault<Location>();
+                    //没有记录
+                    if (location == null) throw new ClassNotFoundException();
+
+                    location.Status = 0;
+                    _db.Entry(location).State = EntityState.Modified;
+                    _db.SaveChanges();
+
+                    scope.Commit();
+                    return 0;
+                }
+                catch { scope.Rollback(); throw new ClassNotFoundException(); }
+            }
         }
     }
 }
