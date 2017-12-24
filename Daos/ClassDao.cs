@@ -168,7 +168,7 @@ namespace Xmu.Crms.Services.ViceVersa
                         {
                             _db.CourseSelection.Remove(t);
                         }
-                        Delete(classId);
+                        Delete(classId);//删除班级
                         _db.SaveChanges();
                     }
                     scope.Commit();
@@ -196,6 +196,12 @@ namespace Xmu.Crms.Services.ViceVersa
             {
                 throw;
             }
+        }
+
+        // 老师获取该班级签到、分组状态.
+        public Location GetLocation(long seminarId, long classId)
+        {
+            return _db.Location.Include(u=>u.ClassInfo).Include(u=>u.Seminar).SingleOrDefault<Location>(u => u.Seminar.Id == seminarId && u.ClassInfo.Id == classId);
         }
     }
 }

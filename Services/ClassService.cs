@@ -12,7 +12,7 @@ namespace Xmu.Crms.Services.ViceVersa
     {
         //private readonly ISeminarService _seminarService;
         //private readonly ICourseService _courseService;
-        private readonly IUserService _userService;
+       // private readonly IUserService _userService;
 
         private readonly IClassDao _classDao;
         public  ClassService(IClassDao classDao)
@@ -98,7 +98,13 @@ namespace Xmu.Crms.Services.ViceVersa
         /// 老师获取该班级签到、分组状态.
         public Location GetCallStatusById(long seminarId, long classId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                //_seminarService.GetSeminarBySeminarId(seminarId);
+                //_classDao.Get(classId);
+                return _classDao.GetLocation(seminarId, classId);
+            }
+            catch (SeminarNotFoundException e) { throw e; }
         }
 
 
