@@ -265,11 +265,6 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
 
-<<<<<<< HEAD
-        /// 按班级id和班级修改班级信息. name不能为空 其他为空则为清零的意思
-=======
-        /// 按班级id和班级修改班级信息.
->>>>>>> Jasper's
         public void UpdateClassByClassId(long classId, ClassInfo newclass)
         {
             try
