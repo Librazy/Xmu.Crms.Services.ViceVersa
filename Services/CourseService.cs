@@ -11,13 +11,15 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 {
     class CourseService : ICourseService
     {
+        private readonly IClassDao _iClassDao;
         private readonly ICourseDao _iCourseDao;
         //private readonly ISeminarService _iSeminarService;
         private readonly IClassService _iClassService;
         //private readonly IUserService _iUserService;
 
-        public CourseService(ICourseDao iCourseDao,IClassService iClassService/*,ISeminarService iSeminarService,IUserService iUserService*/)
+        public CourseService(ICourseDao iCourseDao, IClassDao iClassDao, IClassService iClassService/*,ISeminarService iSeminarService,IUserService iUserService*/)
         {
+            _iClassDao = iClassDao;
             _iCourseDao = iCourseDao;
             //_iSeminarService = iSeminarService;
             _iClassService = iClassService;
@@ -114,6 +116,38 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
+
+        public IList<ClassInfo> ListClassByName(string courseName, string teacherName)
+        {
+            List<ClassInfo> classList = new List<ClassInfo>();
+            if (teacherName == null)//根据课程名称查
+            {
+                IList<ClassInfo> courseClassList = ListClassByCourseName(courseName);
+                classList.AddRange(courseClassList);
+            }
+            else if (courseName == null)//根据教师姓名查
+            {
+                IList<ClassInfo> teacherClassList = ListClassByTeacherName(teacherName);
+                classList.AddRange(teacherClassList);
+            }
+            else  //联合查找
+            {
+                IList<ClassInfo> courseClassList = ListClassByCourseName(courseName);
+                IList<ClassInfo> teacherClassList = ListClassByTeacherName(teacherName);
+                foreach (ClassInfo cc in courseClassList)
+                    foreach (ClassInfo ct in teacherClassList)
+                        if (cc.Id == ct.Id) { classList.Add(cc); break; }
+            }
+
+            ////该学生已选班级列表
+            //List<ClassInfo> studentClass = _classDao.ListClassByUserId(userId);
+            //foreach (ClassInfo c in classList)
+            //    foreach (ClassInfo cs in studentClass)
+            //        if (c.Id == cs.Id) classList.Remove(c);//学生已选的就不列出
+
+            return classList;
+        }
+
         //移到classService
         public IList<ClassInfo> ListClassByUserId(long userId)
         {
@@ -147,6 +181,27 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             {
                 throw;
             }
+        }
+
+        /// 新建班级.
+        public long InsertClassById(long courseId, ClassInfo classInfo)
+        {
+            try
+            {
+                //检查数据是否合法
+                if (classInfo.ReportPercentage < 0 || classInfo.ReportPercentage > 100 ||
+                   classInfo.PresentationPercentage < 0 || classInfo.PresentationPercentage > 100 ||
+                   classInfo.ReportPercentage + classInfo.PresentationPercentage != 100 ||
+                   classInfo.FivePointPercentage < 0 || classInfo.FivePointPercentage > 10 ||
+                   classInfo.FourPointPercentage < 0 || classInfo.FourPointPercentage > 10 ||
+                   classInfo.ThreePointPercentage < 0 || classInfo.ThreePointPercentage > 10 ||
+                   classInfo.FivePointPercentage + classInfo.FourPointPercentage + classInfo.ThreePointPercentage != 10)
+                    throw new InvalidOperationException();
+                classInfo.Course = GetCourseByCourseId(courseId);
+                return _iClassDao.Save(classInfo);    //返回classid
+
+            }
+            catch (CourseNotFoundException ec) { throw ec; }
         }
 
         public IList<Course> ListCourseByUserId(long userId)
