@@ -123,7 +123,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             _iGradeDao.CountPresentationGrade(seminarId, topicList);
         }
 
-        public void CalculatePreGradeByTopicId(long seminarId, long seminarGroupId)
+        public void CountGroupGradeBySerminarId(long seminarId, long seminarGroupId)
         {
             try
             {
