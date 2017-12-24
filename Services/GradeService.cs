@@ -37,9 +37,9 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
-        public SeminarGroup GetSeminarGroupBySeminarGroupId(long userId, long seminarGroupId)
+        public SeminarGroup GetSeminarGroupBySeminarGroupId(long seminarGroupId)
         {
-            try//此处userId无用，将改
+            try
             {
                 return _iGradeDao.GetSeminarGroupBySeminarGroupId(seminarGroupId);
             }
@@ -132,7 +132,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
-        public void CountPresentationGrade(long seminarId, long seminarGroupId)
+        public void CountPresentationGrade(long seminarId)
         {
             try
             {
@@ -164,7 +164,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
-        public void CountGroupGradeBySerminarId(long seminarId, long seminarGroupId)
+        public void CountGroupGradeBySerminarId(long seminarId)
         {
             try
             {
