@@ -112,14 +112,22 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             {
                 throw;
             }
-
         }
 
-        public void CountGroupGradeBySerminarId(long seminarId, long seminarGroupId)
+        public void CountPresentationGrade(long seminarId, long seminarGroupId)
+        {
+            ////调用TopicService 的 IList<Topic> ListTopicBySeminarId(long seminarId)方法
+            IList<Topic> topicList = _iTopicService.ListTopicBySeminarId(seminarId);
+
+            //调用自己的dao分别对每个topic计算
+            _iGradeDao.CountPresentationGrade(seminarId, topicList);
+        }
+
+        public void CalculatePreGradeByTopicId(long seminarId, long seminarGroupId)
         {
             try
             {
-                //调用SeminarGroupService中的ListSeminarGroupBySeminarId 方法
+                ////调用SeminarGroupService中的ListSeminarGroupBySeminarId 方法
                 IList<SeminarGroup> seminarGroupList = _iSeminarGroupService.ListSeminarGroupBySeminarId(seminarId);
 
                 _iGradeDao.CountGroupGradeBySerminarId(seminarId, seminarGroupList);
@@ -128,15 +136,6 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             {
                 throw;
             }
-        }
-
-        public void CountPresentationGrade(long seminarId, long seminarGroupId)
-        { 
-            //调用TopicService 的 IList<Topic> ListTopicBySeminarId(long seminarId)方法
-            IList<Topic> topicList = _iTopicService.ListTopicBySeminarId(seminarId);
-
-            //调用自己的dao分别对每个topic计算
-            _iGradeDao.CountPresentationGrade(seminarId, topicList);
         }
     }
 }

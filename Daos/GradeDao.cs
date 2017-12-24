@@ -232,7 +232,7 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                             throw;
                         }
                     }
-                    for (int i = B; i <= groupNumber; i++)
+                    for (int i = B; i < groupNumber; i++)
                     {
                         try
                         {
@@ -302,13 +302,23 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
             int C = Convert.ToInt32(seminarGroupList.Count * seminarGroupList[0].ClassInfo.ThreePointPercentage * 0.01);
 
             //各小组按比例给分
-            for (int i = 0; i < C; i++)
+            for (int i = 0; i < A; i++)
             {
                 try
                 {
+                    ////更新报告分
+                    //_db.SeminarGroup.Attach(seminarGroupList[i]);
+                    //seminarGroupList[i].FinalGrade = 3;
+                    //_db.SaveChanges();
+
+                    SeminarGroup seminarGroup = _db.SeminarGroup.SingleOrDefault(s => s.Id == tempId[i]);
+                    //如果找不到该组
+                    if (seminarGroup == null)
+                    {
+                        throw new GroupNotFoundException();
+                    }
                     //更新报告分
-                    _db.SeminarGroup.Attach(seminarGroupList[i]);
-                    seminarGroupList[i].FinalGrade = 3;
+                    seminarGroup.FinalGrade = 5;
                     _db.SaveChanges();
                 }
                 catch
@@ -316,13 +326,18 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                     throw;
                 }
             }
-            for (int i = C; i < B + C; i++)
+            for (int i = B; i < B + C; i++)
             {
                 try
                 {
+                    SeminarGroup seminarGroup = _db.SeminarGroup.SingleOrDefault(s => s.Id == tempId[i]);
+                    //如果找不到该组
+                    if (seminarGroup == null)
+                    {
+                        throw new GroupNotFoundException();
+                    }
                     //更新报告分
-                    _db.SeminarGroup.Attach(seminarGroupList[i]);
-                    seminarGroupList[i].FinalGrade = 4;
+                    seminarGroup.FinalGrade = 4;
                     _db.SaveChanges();
                 }
                 catch
@@ -330,13 +345,18 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                     throw;
                 }
             }
-            for (int i = B + C; i < A + B + C; i++)
+            for (int i = B + C; i < seminarGroupList.Count; i++)
             {
                 try
                 {
+                    SeminarGroup seminarGroup = _db.SeminarGroup.SingleOrDefault(s => s.Id == tempId[i]);
+                    //如果找不到该组
+                    if (seminarGroup == null)
+                    {
+                        throw new GroupNotFoundException();
+                    }
                     //更新报告分
-                    _db.SeminarGroup.Attach(seminarGroupList[i]);
-                    seminarGroupList[i].FinalGrade = 5;
+                    seminarGroup.FinalGrade = 3;
                     _db.SaveChanges();
                 }
                 catch
