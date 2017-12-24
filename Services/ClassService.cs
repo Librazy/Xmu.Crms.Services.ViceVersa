@@ -12,7 +12,7 @@ namespace Xmu.Crms.Services.ViceVersa
     {
         //private readonly ISeminarService _seminarService;
         //private readonly ICourseService _courseService;
-        //private readonly IUserService _userService;
+        private readonly IUserService _userService;
 
         private readonly IClassDao _classDao;
         public  ClassService(IClassDao classDao)
@@ -158,15 +158,21 @@ namespace Xmu.Crms.Services.ViceVersa
                 var url =" 1";    //？？？？
                 //_userService.GetUserByUserId(userId);
                 ClassInfo classinfo= GetClassByClassId(classId);
+
                 //找到该班级所属课程下的所有班级
                 IList<ClassInfo> classList = ListClassByCourseId(classinfo.Course.Id);
                 foreach(ClassInfo c in classList)
                 {
-
+                    if (_classDao.GetSelection(userId, c.Id) != 0)//学生已选同课程下其他班级
+                        return url;//？？？
                 }
                CourseSelection coursesele = new CourseSelection();
-                coursesele.Student.Id = userId;
-                coursesele.ClassInfo.Id = classId;
+
+                //测试数据
+                 UserInfo student = new UserInfo() { Id = 91,Password="123" ,Phone="123"};
+                //UserInfo student = _userService.GetUserByUserId(userId);
+                coursesele.Student = student;
+                coursesele.ClassInfo = classinfo;
                 _classDao.InsertSelection(coursesele);
                 return url;
             }
@@ -262,7 +268,7 @@ namespace Xmu.Crms.Services.ViceVersa
 
 
         /// 按班级id和班级修改班级信息.
-        public void UpdateClassByClassId(long classId,ClassInfo classInfo)
+        public void UpdateClassByClassId(long classId)
         {
             //try
             //{
