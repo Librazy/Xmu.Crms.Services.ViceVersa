@@ -15,12 +15,10 @@ namespace Xmu.Crms.Services.ViceVersa
         private readonly IFixGroupService _fixGroupService;
 
         private readonly IClassDao _classDao;
-        public  ClassService(IClassDao classDao, ISeminarService seminarService, IUserService userService, IFixGroupService fixGroupService)
+        public  ClassService(IClassDao classDao)
         {
             _classDao = classDao;
-            _seminarService = seminarService;
-            _userService = userService;
-            _fixGroupService = fixGroupService;
+            //_seminarService = seminarService;
         }
 
 
@@ -133,6 +131,8 @@ namespace Xmu.Crms.Services.ViceVersa
             catch (ClassNotFoundException e) { throw e; }
         }
 
+        
+
         /// 学生按班级id选择班级.成功返回选课记录id 失败返回0
         public long InsertCourseSelectionById(long userId, long classId)
         {
@@ -196,7 +196,8 @@ namespace Xmu.Crms.Services.ViceVersa
             catch (CourseNotFoundException e) { throw e; }
             catch (ClassNotFoundException e) { throw e; }
         }
-
+        
+        //修改班级
         public void UpdateClassByClassId(long classId, ClassInfo newclass)
         {
             try
@@ -228,6 +229,7 @@ namespace Xmu.Crms.Services.ViceVersa
             catch (ClassNotFoundException ec){ throw ec; }
         }
 
+        //根据学生ID获取班级列表.
         public List<ClassInfo> ListClassByUserId(long userId)
         {
             try
@@ -255,9 +257,17 @@ namespace Xmu.Crms.Services.ViceVersa
         //老师结束签到.
         public void EndCallRollById(long seminarId, long classId)
         {
-            var loc = _classDao.GetLocation(seminarId, classId);
-            loc.Status = 2;
-            _classDao.UpdateLocation(loc);
+            try
+            {
+                //_seminarService.GetSeminarBySeminarId(seminarId);
+                GetClassByClassId(classId);
+                
+               
+                _classDao.UpdateLocation(seminarId,classId);
+
+            }
+            catch (SeminarNotFoundException es) { throw es; }
+            catch (ClassNotFoundException ec) { throw ec; }
         }
     }
 }

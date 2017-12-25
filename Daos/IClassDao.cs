@@ -5,13 +5,13 @@ namespace Xmu.Crms.Services.ViceVersa
 {
     interface IClassDao
     {
-        long Save(ClassInfo t);
+        
         long InsertSelection(CourseSelection t);
         long InsertLocation(Location t);
         void Delete(long id);
         void DeleteSelection(long userId,long classId);
         int Update(ClassInfo t);
-        int UpdateLocation(Location t);
+        int UpdateLocation(long seminarId, long classId);
         List<ClassInfo> QueryAll(long id);
         ClassInfo Get(long id);
         int GetSelection(long userId,long classId);

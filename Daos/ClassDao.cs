@@ -44,7 +44,7 @@ namespace Xmu.Crms.Services.ViceVersa
         public ClassInfo Get(long id)
         {
 
-            ClassInfo classinfo = _db.ClassInfo.Include(u=>u.Course).Where(u => u.Id == id).SingleOrDefault<ClassInfo>();
+            ClassInfo classinfo = _db.ClassInfo.Include(u=>u.Course).Include(u=>u.Course.Teacher).Where(u => u.Id == id).SingleOrDefault<ClassInfo>();
             if (classinfo == null)
             {
                 throw new ClassNotFoundException();
@@ -62,7 +62,7 @@ namespace Xmu.Crms.Services.ViceVersa
             if (course == null) { throw new CourseNotFoundException(); }
 
 
-            List<ClassInfo> list = _db.ClassInfo.Include(u => u.Course).Where(u => u.Course.Id == id).ToList<ClassInfo>();
+            List<ClassInfo> list = _db.ClassInfo.Include(u => u.Course).Include(u => u.Course.Teacher).Include(u=>u.Course.Teacher.School).Where(u => u.Course.Id == id).ToList<ClassInfo>();
             if (list == null)
             {
                 throw new ClassNotFoundException();
@@ -71,26 +71,7 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
 
-        //添加班级返回id
-        public long Save(ClassInfo t)
-        {
-            using (var scope = _db.Database.BeginTransaction())
-            {
-                try
-                {
-
-                    _db.ClassInfo.Add(t);
-
-                    _db.SaveChanges();
-
-                    scope.Commit();
-                    return t.Id;
-                }
-                catch { scope.Rollback(); throw; }
-            }
-
-        }
-
+       
         //添加学生选课表返回id
         public long InsertSelection(CourseSelection t)
         {
@@ -187,7 +168,7 @@ namespace Xmu.Crms.Services.ViceVersa
         // 根据学生ID获取班级列表
         public List<ClassInfo> ListClassByUserId(long userId)
         {
-            List<CourseSelection> selectionList = _db.CourseSelection.Include(c => c.Student).Include(c => c.ClassInfo).Where(c => c.Student.Id == userId).ToList<CourseSelection>();
+            List<CourseSelection> selectionList = _db.CourseSelection.Include(c => c.Student).Include(c=>c.Student.School).Include(c => c.ClassInfo).Include(c=>c.ClassInfo.Course.Teacher.School).Where(c => c.Student.Id == userId).ToList<CourseSelection>();
             //找不到对应的选课信息
             if (selectionList == null)
                 throw new ClassNotFoundException();
@@ -225,13 +206,13 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
         //结束签到时修改location
-        public int UpdateLocation(Location t)
+        public int UpdateLocation(long seminarId, long classId)
         {
             using (var scope = _db.Database.BeginTransaction())
             {
                 try
                 {
-                    Location location= _db.Location.Include(u=>u.Seminar).Include(u=>u.ClassInfo).SingleOrDefault<Location>(u=>u.Id==t.Id);
+                    Location location= _db.Location.Include(u=>u.Seminar).Include(u=>u.ClassInfo).SingleOrDefault<Location>(u=>u.ClassInfo.Id==classId&&u.Seminar.Id==seminarId);
                     //没有记录
                     if (location == null) throw new ClassNotFoundException();
 
