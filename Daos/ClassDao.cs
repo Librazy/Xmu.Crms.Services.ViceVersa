@@ -62,7 +62,7 @@ namespace Xmu.Crms.Services.ViceVersa
             if (course == null) { throw new CourseNotFoundException(); }
 
 
-            List<ClassInfo> list = _db.ClassInfo.Include(u => u.Course).Where(u => u.Course.Id == id).ToList<ClassInfo>();
+            List<ClassInfo> list = _db.ClassInfo.Include(u => u.Course).Include(u => u.Course.Teacher).Include(u=>u.Course.Teacher.School).Where(u => u.Course.Id == id).ToList<ClassInfo>();
             if (list == null)
             {
                 throw new ClassNotFoundException();
@@ -168,7 +168,7 @@ namespace Xmu.Crms.Services.ViceVersa
         // 根据学生ID获取班级列表
         public List<ClassInfo> ListClassByUserId(long userId)
         {
-            List<CourseSelection> selectionList = _db.CourseSelection.Include(c => c.Student).Include(c => c.ClassInfo).Where(c => c.Student.Id == userId).ToList<CourseSelection>();
+            List<CourseSelection> selectionList = _db.CourseSelection.Include(c => c.Student).Include(c=>c.Student.School).Include(c => c.ClassInfo).Include(c=>c.ClassInfo.Course.Teacher.School).Where(c => c.Student.Id == userId).ToList<CourseSelection>();
             //找不到对应的选课信息
             if (selectionList == null)
                 throw new ClassNotFoundException();

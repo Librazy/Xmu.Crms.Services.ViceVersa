@@ -182,7 +182,7 @@ namespace Xmu.Crms.Services.ViceVersa.Services
                     IList<ClassInfo> teacherClassList = ListClassByTeacherName(teacherName);
                     classList.AddRange(teacherClassList);
                 }
-                else  //联合查找
+                else if(courseName!=null&&teacherName!=null) //联合查找
                 {
                     IList<ClassInfo> courseClassList = ListClassByCourseName(courseName);
                     IList<ClassInfo> teacherClassList = ListClassByTeacherName(teacherName);
