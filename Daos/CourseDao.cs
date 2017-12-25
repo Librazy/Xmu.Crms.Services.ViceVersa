@@ -113,5 +113,26 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
                 throw;
             }
         }
+
+        //添加班级返回id
+        public long Save(ClassInfo t)
+        {
+            using (var scope = _db.Database.BeginTransaction())
+            {
+                try
+                {
+
+                    _db.ClassInfo.Add(t);
+
+                    _db.SaveChanges();
+
+                    scope.Commit();
+                    return t.Id;
+                }
+                catch { scope.Rollback(); throw; }
+            }
+
+        }
+
     }
 }

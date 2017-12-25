@@ -167,6 +167,44 @@ namespace Xmu.Crms.Services.ViceVersa.Services
             }
         }
 
+        public IList<ClassInfo> ListClassByName(string courseName, string teacherName)
+        {
+            try
+            {
+                List<ClassInfo> classList = new List<ClassInfo>();
+                if (teacherName == null)//根据课程名称查
+                {
+                    IList<ClassInfo> courseClassList = ListClassByCourseName(courseName);
+                    classList.AddRange(courseClassList);
+                }
+                else if (courseName == null)//根据教师姓名查
+                {
+                    IList<ClassInfo> teacherClassList = ListClassByTeacherName(teacherName);
+                    classList.AddRange(teacherClassList);
+                }
+                else  //联合查找
+                {
+                    IList<ClassInfo> courseClassList = ListClassByCourseName(courseName);
+                    IList<ClassInfo> teacherClassList = ListClassByTeacherName(teacherName);
+                    foreach (ClassInfo cc in courseClassList)
+                        foreach (ClassInfo ct in teacherClassList)
+                            if (cc.Id== ct.Id) { classList.Add(cc); break; }
+                }
+
+                ////该学生已选班级列表
+                //List<ClassInfo> studentClass = _classDao.ListClassByUserId(userId);
+                //foreach (ClassInfo c in classList)
+                //    foreach (ClassInfo cs in studentClass)
+                //        if (c.Id == cs.Id) classList.Remove(c);//学生已选的就不列出
+
+                return classList;
+
+            }
+            catch (CourseNotFoundException ec) { throw ec; }
+            catch (UserNotFoundException eu) { throw eu; }
+          
+        }
+
         public void UpdateCourseByCourseId(long courseId, Course course)
         {
             try
@@ -179,5 +217,30 @@ namespace Xmu.Crms.Services.ViceVersa.Services
                 throw;
             }
         }
+
+
+        /// 新建班级.
+        public long InsertClassById(long courseId, ClassInfo classInfo)
+        {
+            try
+            {
+                Course course= GetCourseByCourseId(courseId);
+                //检查数据是否合法
+                if (classInfo.ReportPercentage < 0 || classInfo.ReportPercentage > 100 ||
+                   classInfo.PresentationPercentage < 0 || classInfo.PresentationPercentage > 100 ||
+                   classInfo.ReportPercentage + classInfo.PresentationPercentage != 100 ||
+                   classInfo.FivePointPercentage < 0 || classInfo.FivePointPercentage > 10 ||
+                   classInfo.FourPointPercentage < 0 || classInfo.FourPointPercentage > 10 ||
+                   classInfo.ThreePointPercentage < 0 || classInfo.ThreePointPercentage > 10 ||
+                   classInfo.FivePointPercentage + classInfo.FourPointPercentage + classInfo.ThreePointPercentage != 10)
+                    throw new InvalidOperationException();
+                classInfo.Course = course;
+                return _iCourseDao.Save(classInfo);    //返回classid
+
+            }
+            catch (CourseNotFoundException ec) { throw ec; }
+        }
+
+       
     }
 }

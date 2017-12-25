@@ -111,5 +111,8 @@ namespace Xmu.Crms.Services.ViceVersa.Daos
          * @exception ClassNotFoundException 未找到班级
          */
         //List<ClassInfo> ListClassByUserId(long userId);
+
+         //新增班级
+        long Save(ClassInfo t);
     }
 }

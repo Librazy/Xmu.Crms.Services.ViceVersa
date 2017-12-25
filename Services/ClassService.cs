@@ -131,27 +131,7 @@ namespace Xmu.Crms.Services.ViceVersa
             catch (ClassNotFoundException e) { throw e; }
         }
 
-
-        /// 新建班级.
-        public long InsertClassById(long courseId, ClassInfo classInfo)
-        {
-            try
-            {
-                //检查数据是否合法
-                if (classInfo.ReportPercentage < 0 || classInfo.ReportPercentage > 100 ||
-                   classInfo.PresentationPercentage < 0 || classInfo.PresentationPercentage > 100 ||
-                   classInfo.ReportPercentage + classInfo.PresentationPercentage != 100 ||
-                   classInfo.FivePointPercentage < 0 || classInfo.FivePointPercentage > 10 ||
-                   classInfo.FourPointPercentage < 0 || classInfo.FourPointPercentage > 10 ||
-                   classInfo.ThreePointPercentage < 0 || classInfo.ThreePointPercentage > 10 ||
-                   classInfo.FivePointPercentage + classInfo.FourPointPercentage + classInfo.ThreePointPercentage != 10)
-                    throw new InvalidOperationException();
-                return _classDao.Save(classInfo);    //返回classid
-
-            }
-            catch(CourseNotFoundException ec) { throw ec; }
-        }
-
+        
 
         /// 学生按班级id选择班级.成功返回选课记录id 失败返回0
         public long InsertCourseSelectionById(long userId, long classId)
@@ -216,49 +196,7 @@ namespace Xmu.Crms.Services.ViceVersa
             catch (CourseNotFoundException e) { throw e; }
             catch (ClassNotFoundException e) { throw e; }
         }
-
-
-
-
-        // 按课程名称和教师名称获取班级列表.
-        public IList<ClassInfo> ListClassByName(string courseName, string teacherName)
-        {
-            //try
-            //{
-            //    long userId = 1;   //jwt？？？？？
-            //    List<ClassInfo> classList = new List<ClassInfo>();
-            //    if (teacherName == null)//根据课程名称查
-            //    {
-            //        IList<ClassInfo> courseClassList = _courseService.ListClassByCourseName (courseName);
-            //        classList.AddRange(courseClassList);
-            //    }
-            //    else if (courseName == null)//根据教师姓名查
-            //    {
-            //        IList<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
-            //        classList.AddRange(teacherClassList);
-            //    }
-            //    else  //联合查找
-            //    {
-            //        IList<ClassInfo> courseClassList = _courseService.ListClassByCourseName(courseName);
-            //        IList<ClassInfo> teacherClassList = _courseService.ListClassByTeacherName(teacherName);
-            //        foreach (ClassInfo cc in courseClassList)
-            //            foreach (ClassInfo ct in teacherClassList)
-            //                if (cc.Id == ct.Id) { classList.Add(cc); break; }
-            //    }
-
-            //    //该学生已选班级列表
-            //    List<ClassInfo> studentClass = _classDao.ListClassByUserId(userId);
-            //    foreach (ClassInfo c in classList)
-            //        foreach (ClassInfo cs in studentClass)
-            //            if (c.Id == cs.Id) classList.Remove(c);//学生已选的就不列出
-
-            //    return classList;
-
-            //}catch(CourseNotFoundException ec) { throw ec; }
-            //catch(UserNotFoundException eu) { throw eu; }
-            return null;
-        }
-
+        
 
         public void UpdateClassByClassId(long classId, ClassInfo newclass)
         {
@@ -317,14 +255,15 @@ namespace Xmu.Crms.Services.ViceVersa
         }
 
         //老师结束签到.
-        public void EndCallRollById(Location location)
+        public void EndCallRollById(long seminarId, long classId)
         {
             try
             {
-                _seminarService.GetSeminarBySeminarId(location.Seminar.Id);
-                 GetClassByClassId(location.ClassInfo.Id);
+                //_seminarService.GetSeminarBySeminarId(seminarId);
+                GetClassByClassId(classId);
                 
-                 _classDao.UpdateLocation(location);
+               
+                _classDao.UpdateLocation(seminarId,classId);
 
             }
             catch (SeminarNotFoundException es) { throw es; }
