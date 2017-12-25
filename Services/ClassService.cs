@@ -269,5 +269,7 @@ namespace Xmu.Crms.Services.ViceVersa
             catch (SeminarNotFoundException es) { throw es; }
             catch (ClassNotFoundException ec) { throw ec; }
         }
+
+      
     }
 }
