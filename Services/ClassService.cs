@@ -197,7 +197,7 @@ namespace Xmu.Crms.Services.ViceVersa
             catch (ClassNotFoundException e) { throw e; }
         }
         
-
+        //修改班级
         public void UpdateClassByClassId(long classId, ClassInfo newclass)
         {
             try

@@ -44,7 +44,7 @@ namespace Xmu.Crms.Services.ViceVersa
         public ClassInfo Get(long id)
         {
 
-            ClassInfo classinfo = _db.ClassInfo.Include(u=>u.Course).Where(u => u.Id == id).SingleOrDefault<ClassInfo>();
+            ClassInfo classinfo = _db.ClassInfo.Include(u=>u.Course).Include(u=>u.Course.Teacher).Where(u => u.Id == id).SingleOrDefault<ClassInfo>();
             if (classinfo == null)
             {
                 throw new ClassNotFoundException();
