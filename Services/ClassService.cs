@@ -15,12 +15,14 @@ namespace Xmu.Crms.Services.ViceVersa
         private readonly IFixGroupService _fixGroupService;
 
         private readonly IClassDao _classDao;
-        public  ClassService(IClassDao classDao)
-        {
-            _classDao = classDao;
-            //_seminarService = seminarService;
-        }
 
+        public ClassService(ISeminarService seminarService, IUserService userService, IFixGroupService fixGroupService, IClassDao classDao)
+        {
+            _seminarService = seminarService;
+            _userService = userService;
+            _fixGroupService = fixGroupService;
+            _classDao = classDao;
+        }
 
         /// 按班级id删除班级.(包括学生选课表)
         public void DeleteClassByClassId(long classId)
