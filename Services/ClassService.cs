@@ -13,7 +13,6 @@ namespace Xmu.Crms.Services.ViceVersa
         private readonly ISeminarService _seminarService;
         private readonly IUserService _userService;
         private readonly IFixGroupService _fixGroupService;
-
         private readonly IClassDao _classDao;
 
         public ClassService(ISeminarService seminarService, IUserService userService, IFixGroupService fixGroupService, IClassDao classDao)
