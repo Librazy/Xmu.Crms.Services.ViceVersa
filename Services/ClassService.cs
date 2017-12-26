@@ -13,14 +13,15 @@ namespace Xmu.Crms.Services.ViceVersa
         private readonly ISeminarService _seminarService;
         private readonly IUserService _userService;
         private readonly IFixGroupService _fixGroupService;
-
         private readonly IClassDao _classDao;
-        public  ClassService(IClassDao classDao)
-        {
-            _classDao = classDao;
-            //_seminarService = seminarService;
-        }
 
+        public ClassService(ISeminarService seminarService, IUserService userService, IFixGroupService fixGroupService, IClassDao classDao)
+        {
+            _seminarService = seminarService;
+            _userService = userService;
+            _fixGroupService = fixGroupService;
+            _classDao = classDao;
+        }
 
         /// 按班级id删除班级.(包括学生选课表)
         public void DeleteClassByClassId(long classId)
@@ -194,7 +195,6 @@ namespace Xmu.Crms.Services.ViceVersa
                 return list;
             }
             catch (CourseNotFoundException e) { throw e; }
-            catch (ClassNotFoundException e) { throw e; }
         }
         
         //修改班级
@@ -269,5 +269,7 @@ namespace Xmu.Crms.Services.ViceVersa
             catch (SeminarNotFoundException es) { throw es; }
             catch (ClassNotFoundException ec) { throw ec; }
         }
+
+      
     }
 }
