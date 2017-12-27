@@ -149,20 +149,11 @@ namespace Xmu.Crms.Services.ViceVersa.Services
 
         public IList<Course> ListCourseByUserId(long userId)
         {
-            try
-            {
-                if (userId < 0)
+          if (userId < 0)
                     throw new ArgumentException();
                 List<Course> courseList = _iCourseDao.ListCourseByUserId(userId);
                 //查不到课程
-                if (courseList==null || courseList.Count==0)
-                    throw new CourseNotFoundException();
                 return courseList;
-            }
-            catch
-            {
-                throw;
-            }
         }
 
         public IList<ClassInfo> ListClassByName(string courseName, string teacherName)

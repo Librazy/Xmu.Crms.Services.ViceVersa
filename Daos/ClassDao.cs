@@ -164,16 +164,8 @@ namespace Xmu.Crms.Services.ViceVersa
         // 根据学生ID获取班级列表
         public List<ClassInfo> ListClassByUserId(long userId)
         {
-            List<CourseSelection> selectionList = _db.CourseSelection.Include(c => c.Student).Include(c=>c.Student.School).Include(c => c.ClassInfo).Include(c=>c.ClassInfo.Course.Teacher.School).Where(c => c.Student.Id == userId).ToList<CourseSelection>();
-            //找不到对应的选课信息
-            if (selectionList == null)
-                throw new ClassNotFoundException();
-
-            //根据classId获得对应的class
-            List<ClassInfo> classList = new List<ClassInfo>();
-            foreach (CourseSelection i in selectionList)
-                classList.Add(Get(i.ClassInfo.Id));
-            return classList;
+            List<CourseSelection> selectionList = _db.CourseSelection.Include(c => c.ClassInfo).Where(c => c.Student.Id == userId).ToList();
+            return selectionList.Select(s => s.ClassInfo).ToList();
         }
 
         // 老师获取该班级签到、分组状态.
